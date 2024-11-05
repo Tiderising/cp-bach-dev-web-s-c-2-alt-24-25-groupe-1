@@ -3,14 +3,14 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #ffffff; /* Couleur de fond pour le mode clair */
+  --foreground: #171717; /* Couleur de texte pour le mode clair */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0a0a0a; /* Couleur de fond pour le mode sombre */
+    --foreground: #ededed; /* Couleur de texte pour le mode sombre */
   }
 }
 
@@ -18,4 +18,5 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+  height: 100vh;
 }

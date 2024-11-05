@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Input, Button } from "@nextui-org/react";
 import { toast } from "react-hot-toast";
+import { div } from "framer-motion/client";
 
 interface SignInFormProps {
   csrfToken: string;
@@ -18,27 +19,27 @@ const SignInForm: React.FC<SignInFormProps> = ({ csrfToken }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="">
+      <form onSubmit={handleSubmit} className="space-y-6">
       <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="email" className="block text-sm font-medium">
           Email address
         </label>
-        <Input
-          type="email"
-          id="email"
-          name="email"
-          required
-          fullWidth
+
+        <Input 
+          size={"sm"} 
+          type="email" 
+          label="Email" 
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="mt-1"
         />
       </div>
       <Button type="submit" fullWidth color="primary">
         Sign in with Email
       </Button>
     </form>
+    </div>
   );
 };
 
