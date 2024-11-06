@@ -17,7 +17,7 @@ const Links = [
   },
   {
     title: "Historique",
-    href: "/crm/history",
+    href: "/crm/log",
     icon: LuHistory,
   },
   {
