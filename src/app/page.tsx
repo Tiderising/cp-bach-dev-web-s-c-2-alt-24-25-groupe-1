@@ -6,11 +6,11 @@ import { IoIosLock } from "react-icons/io";
 
 export default function Home() {
   return (
-    <main className="p-4 flex flex-col justify-center items-center gap-12">
+    <main className="p-4 flex flex-col justify-center items-center gap-6">
       <header className="flex justify-between w-full">
         <div className="flex items-center gap-1">
           <IoIosLock size={30} className="text-blue-400" />
-          <p className="font-extrabold text-lg">Secu-tech</p>
+          <p className="font-semibold text-lg">Secu-tech</p>
         </div>
         <Button>
           <Link href="/">Commencer</Link>
