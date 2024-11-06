@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { IoKeyOutline } from "react-icons/io5";
+import { TbCirclePlus } from "react-icons/tb";
 
 const GenerateKey = () => {
   return (
@@ -19,7 +19,7 @@ const GenerateKey = () => {
       <Card>
         <CardHeader>
           <div className="flex gap-2">
-            <IoKeyOutline size={32} />
+            <TbCirclePlus size={32} />
             <h1 className="text-2xl">Générer une nouvelle clé</h1>
           </div>
           <p>
