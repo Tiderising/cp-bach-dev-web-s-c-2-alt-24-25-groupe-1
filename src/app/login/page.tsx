@@ -11,8 +11,8 @@ interface IFormInputs {
 }
 
 const schema = yup.object().shape({
-  email: yup.string().email('Invalid email format').required('Email is required'),
-  password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
+  email: yup.string().email('Format d\'email invalide').required('L\'email est requis'),
+  password: yup.string().required('Le mot de passe est requis'),
 });
 
 const LoginPage = () => {
@@ -31,7 +31,7 @@ const LoginPage = () => {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <form onSubmit={handleSubmit(onSubmit)} className="bg-white p-6 rounded shadow-md w-full max-w-sm">
-        <h2 className="text-2xl font-bold mb-4">Login</h2>
+        <h2 className="text-2xl font-bold mb-4">Connexion</h2>
         <div className="mb-4">
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">
             Email
@@ -46,7 +46,7 @@ const LoginPage = () => {
         </div>
         <div className="mb-4">
           <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-            Password
+            Mot de passe
           </label>
           <input
             type="password"
@@ -60,7 +60,7 @@ const LoginPage = () => {
           type="submit"
           className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
         >
-          Sign In
+          Se connecter
         </button>
       </form>
     </div>

@@ -16,45 +16,25 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         const prisma = new PrismaClient().$extends(withAccelerate());
 
-        console.log("Testing the authorize function... 1");
-        
-
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Missing credentials");
         }
-
-        console.log("Testing the authorize function... 2");
-
 
         try {
           const { email, password } = credentials;
           const user = await prisma.user.findUnique({
             where: { email },
           });
-          console.log(user);
-          
-          console.log("Testing the authorize function... 3");
 
           if (!user) {
             throw new Error("Identifiant incorrect");
           }
 
-        console.log("Testing the authorize function... 4");
-
-
           const passwordMatch = await compare(password, user.password);
-          
-          console.log(passwordMatch);
-          console.log([password, user.password]);
-          console.log(user)
-          
-          
 
           if (!passwordMatch) {
             throw new Error("Mot de passe incorrect");
           }
-
-          console.log("Testing the authorize function... 5");
 
           return {
             id: user.id,

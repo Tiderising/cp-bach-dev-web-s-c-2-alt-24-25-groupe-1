@@ -15,16 +15,16 @@ interface IFormInputs {
 }
 
 const schema = yup.object().shape({
-  firstName: yup.string().required('First name is required'),
-  lastName: yup.string().required('Last name is required'),
-  email: yup.string().email('Invalid email format').required('Email is required'),
+  firstName: yup.string().required('Le prénom est requis'),
+  lastName: yup.string().required('Le nom de famille est requis'),
+  email: yup.string().email('Format d\'email invalide').required('L\'email est requis'),
   password: yup.string()
-    .min(8, 'Password must be at least 8 characters')
-    .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
-    .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
-    .matches(/[0-9]/, 'Password must contain at least one number')
-    .matches(/[@$!%*?&#]/, 'Password must contain at least one special character')
-    .required('Password is required'),
+    .min(8, 'Le mot de passe doit contenir au moins 8 caractères')
+    .matches(/[a-z]/, 'Le mot de passe doit contenir au moins une lettre minuscule')
+    .matches(/[A-Z]/, 'Le mot de passe doit contenir au moins une lettre majuscule')
+    .matches(/[0-9]/, 'Le mot de passe doit contenir au moins un chiffre')
+    .matches(/[@$!%*?&#]/, 'Le mot de passe doit contenir au moins un caractère spécial')
+    .required('Le mot de passe est requis'),
 });
 
 const RegisterPage = () => {
@@ -38,28 +38,28 @@ const RegisterPage = () => {
       await toast.promise(
         axios.post("/api/register", data),
         {
-          loading: "Registering...",
-          success: "Registration successful!",
+          loading: "Enregistrement en cours...",
+          success: "Enregistrement réussi !",
           error: (error) => {
-            const errorMessage = error.response?.data?.error || "An error occurred";
-            return `Registration failed: ${errorMessage}`;
+            const errorMessage = error.response?.data?.error || "Une erreur s'est produite";
+            return `Échec de l'enregistrement : ${errorMessage}`;
           },
         }
       );
 
       router.push("/login");
     } catch (error) {
-      console.log("Registration error:", error);
+      console.log("Erreur d'enregistrement :", error);
     }
   };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <form onSubmit={handleSubmit(onSubmit)} className="bg-white p-6 rounded shadow-md w-full max-w-sm">
-        <h2 className="text-2xl font-bold mb-4">Register</h2>
+        <h2 className="text-2xl font-bold mb-4">S'inscrire</h2>
         <div className="mb-4">
           <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
-            First Name
+            Prénom
           </label>
           <input
             type="text"
@@ -71,7 +71,7 @@ const RegisterPage = () => {
         </div>
         <div className="mb-4">
           <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
-            Last Name
+            Nom de famille
           </label>
           <input
             type="text"
@@ -95,7 +95,7 @@ const RegisterPage = () => {
         </div>
         <div className="mb-4">
           <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-            Password
+            Mot de passe
           </label>
           <input
             type="password"
@@ -109,7 +109,7 @@ const RegisterPage = () => {
           type="submit"
           className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
         >
-          Register
+          S'inscrire
         </button>
       </form>
     </div>

@@ -6,6 +6,15 @@ import { hash } from "bcryptjs";
 export async function POST(req: Request) {
     const { email, password, firstName, lastName } = await req.json();
 
+    // Password strength validation
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+    if (!passwordRegex.test(password)) {
+        return NextResponse.json(
+            { error: "Le mot de passe doit contenir au moins 8 caractères, une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial." },
+            { status: 400 }
+        );
+    }
+
     const existingUser = await prisma.user.findUnique({
         where: { email },
     });
