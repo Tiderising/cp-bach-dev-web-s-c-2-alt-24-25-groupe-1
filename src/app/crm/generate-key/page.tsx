@@ -15,7 +15,7 @@ import { IoKeyOutline } from "react-icons/io5";
 
 const GenerateKey = () => {
   return (
-    <main className="flex size-full items-center justify-center">
+    <main className="flex size-full items-center justify-center bg-secondary">
       <Card>
         <CardHeader>
           <div className="flex gap-2">
