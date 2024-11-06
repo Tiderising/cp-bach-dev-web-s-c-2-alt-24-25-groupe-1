@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { IoKeyOutline } from "react-icons/io5";
-import { TbCirclePlus } from "react-icons/tb";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { BsThreeDots } from "react-icons/bs";
 import {
   Table,
   TableBody,
@@ -11,10 +12,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import Link from "next/link";
+import { BsThreeDots } from "react-icons/bs";
+import { IoKeyOutline } from "react-icons/io5";
+import { TbCirclePlus } from "react-icons/tb";
 
 const keys = [
   {
@@ -51,13 +52,12 @@ const keys = [
 
 export default function ManageKeys() {
   return (
-    <main className="p-4 size-full">
-      <div className="flex items-center gap-4 mb-8">
-        <IoKeyOutline size={40} />
-        <p className="font-semibold text-4xl">Management des clefs</p>
+    <main className="flex size-full flex-col gap-4 bg-secondary p-4">
+      <div className="flex items-center gap-4 pt-4">
+        <IoKeyOutline size={24} />
+        <p className="text-2xl font-semibold">Gérer les clés</p>
       </div>
-
-      <div className="flex items-center gap-4 mb-4 justify-between w-full">
+      <div className="flex w-full items-center justify-between gap-4">
         <Input
           className="w-80"
           type="text"
@@ -65,14 +65,14 @@ export default function ManageKeys() {
         />
         <Button>
           <TbCirclePlus />
-          Générer une clef
+          <Link href={"/crm/generate-key"}>Générer une clé</Link>
         </Button>
       </div>
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead className="w-fit">Nom de la clé</TableHead>
-            <TableHead>Type</TableHead>
+          <TableRow className="h-14">
+            <TableHead>Nom de la clé</TableHead>
+            <TableHead>Type d&apos;algorithme</TableHead>
             <TableHead>Longueur de la clé</TableHead>
             <TableHead>Date de création</TableHead>
             <TableHead className="text-center">Actions</TableHead>
@@ -81,11 +81,11 @@ export default function ManageKeys() {
         <TableBody>
           {keys.map((key, index) => (
             <TableRow key={index}>
-              <TableCell className="font-medium">{key.name}</TableCell>
-              <TableCell>{key.algorithm}</TableCell>
-              <TableCell>{key.length}</TableCell>
-              <TableCell>{key.createdAt}</TableCell>
-              <TableCell className="flex items-center justify-center">
+              <TableCell className="h-16 font-medium">{key.name}</TableCell>
+              <TableCell className="h-16">{key.algorithm}</TableCell>
+              <TableCell className="h-16">{key.length}</TableCell>
+              <TableCell className="h-16">{key.createdAt}</TableCell>
+              <TableCell className="flex h-16 items-center justify-center">
                 <DropdownMenu>
                   <DropdownMenuTrigger>
                     <BsThreeDots />
