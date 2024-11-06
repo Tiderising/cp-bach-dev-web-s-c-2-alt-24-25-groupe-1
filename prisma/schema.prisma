@@ -18,8 +18,8 @@ model User {
   // Optional for WebAuthn support
   Authenticator Authenticator[]
 
-  passwordHash    String
-  twoFactorSecret String? // Optional for 2FA secret
+  // passwordHash    String? // Make this field optional
+  // twoFactorSecret String? // Optional for 2FA secret
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
