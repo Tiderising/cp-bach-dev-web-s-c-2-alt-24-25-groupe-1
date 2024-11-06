@@ -1,9 +1,8 @@
-import Link from 'next/link';
-import React from 'react';
+import Link from "next/link";
 
 const Sidebar = () => {
   return (
-    <div className="sidebar">
+    <div className="">
       <ul>
         <li>
           <Link href="/crm/">Dashboard</Link>
