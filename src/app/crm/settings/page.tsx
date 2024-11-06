@@ -1,18 +1,19 @@
-import { IoKeyOutline, IoSettingsOutline } from "react-icons/io5";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { IoSettingsOutline } from "react-icons/io5";
 
 export default function ManageKeys() {
   return (
-    <main className="p-4 size-full">
-      {/* En-tête du paramètre */}
-      <div className="flex items-center gap-4 mb-8">
-        <IoSettingsOutline size={40} />
-        <p className="font-semibold text-4xl">Paramètre</p>
+    <main className="flex size-full flex-col gap-4 bg-secondary p-4">
+      <div className="flex items-center gap-2 pt-4">
+        <IoSettingsOutline size={24} />
+        <p className="text-2xl font-semibold">Paramètres</p>
       </div>
 
-      {/* Conteneur pour les sessions actives */}
-      <section className="bg-gray-100 dark:bg-gray-900 p-6 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-semibold mb-4">Sessions Actives</h2>
-        <div className="space-y-4">
+      <Card>
+        <CardHeader>
+          <h2 className="text-lg">Sessions Actives</h2>
+        </CardHeader>
+        <CardContent className="space-y-4">
           <SessionItem
             ip="Windows 10"
             browser="Chrome"
@@ -25,16 +26,21 @@ export default function ManageKeys() {
             date="2024-11-05"
             location="Lyon, France"
           />
-        </div>
-      </section>
+        </CardContent>
+      </Card>
     </main>
   );
 }
 
-// Composant individuel pour afficher chaque session active
-function SessionItem({ ip, browser, date, location }) {
+type SessionItem = {
+  ip: string;
+  browser: string;
+  date: string;
+  location: string;
+};
+function SessionItem({ ip, browser, date, location }: SessionItem) {
   return (
-    <div className="flex justify-between items-center bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-300 dark:border-gray-600">
+    <div className="flex items-center justify-between rounded-lg border border-gray-300 bg-white p-4 shadow dark:border-gray-600 dark:bg-gray-800">
       <div>
         <p className="font-medium">IP : {ip}</p>
         <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -47,7 +53,7 @@ function SessionItem({ ip, browser, date, location }) {
           Localisation : {location}
         </p>
       </div>
-      <button className="text-red-500 hover:underline text-sm">
+      <button className="text-sm text-red-500 hover:underline">
         Déconnecter
       </button>
     </div>

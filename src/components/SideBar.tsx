@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { IoKeyOutline, IoSettingsOutline } from "react-icons/io5";
-import { LuHistory } from "react-icons/lu";
+import { LuHistory, LuImport } from "react-icons/lu";
 import { TbCirclePlus } from "react-icons/tb";
 import { Button } from "./ui/button";
 
@@ -14,6 +14,11 @@ const Links = [
     title: "Gérer les clés",
     href: "/crm/manage-keys",
     icon: IoKeyOutline,
+  },
+  {
+    title: "Importer une clé",
+    href: "/crm/import-key",
+    icon: LuImport,
   },
   {
     title: "Historique",
