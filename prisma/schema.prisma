@@ -1,14 +1,82 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
 
 generator client {
   provider = "prisma-client-js"
 }
 
-datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+model User {
+  id                Int        @id @default(autoincrement())
+  email             String     @unique
+  passwordHash      String
+  twoFactorSecret   String?    // Optional for 2FA secret
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  // Relations
+  keys              Key[]
+  activityLogs      ActivityLog[]
+  sessionTokens     SessionToken?
+  securitySettings  SecuritySetting?
+}
+
+model Key {
+  id                 Int        @id @default(autoincrement())
+  userId             Int
+  keyName            String
+  algorithm          String
+  keySize            Int
+  curve              String?
+  publicKey          String
+  encryptedPrivateKey String
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+
+  // Relations
+  user               User       @relation(fields: [userId], references: [id])
+  activityLogs       ActivityLog[]
+
+  @@index([userId, keyName])
+}
+
+model ActivityLog {
+  id          Int        @id @default(autoincrement())
+  userId      Int
+  keyId       Int?       // Optional key reference
+  action      String
+  timestamp   DateTime   @default(now())
+  details     String?
+
+  // Relations
+  user        User       @relation(fields: [userId], references: [id])
+  key         Key?       @relation(fields: [keyId], references: [id])
+
+  @@index([userId, action, timestamp])
+}
+
+model SessionToken {
+  id           Int        @id @default(autoincrement())
+  userId       Int        @unique
+  token        String     @unique
+  createdAt    DateTime   @default(now())
+  expiresAt    DateTime
+  isPersistent Boolean    @default(false)
+
+  // Relations
+  user         User       @relation(fields: [userId], references: [id])
+
+  @@index([userId, expiresAt])
+}
+
+model SecuritySetting {
+  id                 Int        @id @default(autoincrement())
+  userId             Int        @unique
+  twoFactorEnabled   Boolean    @default(false)
+  sessionTimeout     Int        @default(30)
+  lastPasswordChange DateTime   @default(now())
+
+  // Relations
+  user               User       @relation(fields: [userId], references: [id])
 }
