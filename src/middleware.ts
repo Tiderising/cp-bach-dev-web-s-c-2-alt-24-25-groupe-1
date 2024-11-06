@@ -12,14 +12,6 @@ export default withAuth(
       async authorized({ token, req: { nextUrl } }) {
         if (!token) return false;
 
-        // Example: Fetch user roles from the database
-        const user = await prisma.user.findUnique({
-          where: { id: token.sub },
-          select: { role: true },
-        });
-
-        if (!user) return false;
-
         // // Check if the user has access to CRM or account routes
         // if (nextUrl.pathname.includes("/crm") || nextUrl.pathname.includes("/auth")) {
         //   return user.role === Role.ADMIN; // Example role check
