@@ -11,6 +11,13 @@ export default function Layout({
   const role = (session.data?.user as { role?: string })?.role;
   const status = (session.data?.user as { status?: string })?.status;
 
+  console.log("Role:", role);
+  console.log("Status:", status);
+
+
+  // TODO : Si la double authentification est activée, vérifier si status === "ACTIVE" si oui rediriger vers /account/2auth sinon afficher le composant
+  
+
   return (
     <div className="flex size-full flex-row">
       <SideBar />

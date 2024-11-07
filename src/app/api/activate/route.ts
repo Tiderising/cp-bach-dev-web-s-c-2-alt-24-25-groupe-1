@@ -22,7 +22,7 @@ export async function POST(req: Request) {
             data: { status: Status.ACTIVE, twoFactorCode: null },
         });
 
-        return NextResponse.json({ message: "Compte activé avec succès" });
+        return NextResponse.json({ message: "Compte activé avec succès" }, { status: 200 });
     } catch (error) {
         console.log("Erreur lors de l'activation du compte :", error);
         return NextResponse.json(

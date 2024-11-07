@@ -1,15 +1,19 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { useRouter, useSearchParams } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { Status } from "@prisma/client";
 
 const ActivationPage = () => {
   const { register, handleSubmit, setValue, formState: { errors } } = useForm<{ code: string }>();
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const session = useSession();
+  const status = (session.data?.user as { status?: string }).status;
 
   // Utilisation du paramètre "code" dans l'URL pour remplir le champ par défaut
   useEffect(() => {
@@ -19,17 +23,27 @@ const ActivationPage = () => {
     }
   }, [searchParams, setValue]);
 
+  useEffect(() => {
+    if (status === Status.ACTIVE) {
+      toast.success("Votre compte est déjà activé !");
+      router.push("/crm");
+    }
+  }, [status, router]);
+
   const onSubmit: SubmitHandler<{ code: string }> = async data => {
     try {
       await toast.promise(
-        axios.post("/api/activate", data),
+        axios.post("/api/activate", data).then(() => {
+          setTimeout(() => {
+            router.push("/crm");
+          }, 2000); // Correct usage of setTimeout
+        }),
         {
           loading: "Vérification en cours...",
           success: "Compte activé avec succès !",
           error: "Échec de l'activation : Code invalide ou expiré.",
         }
       );
-      router.push("/login");
     } catch (error) {
       console.log("Erreur d'activation :", error);
     }
