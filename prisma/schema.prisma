@@ -13,23 +13,23 @@ generator client {
 }
 
 model User {
-  id            String          @id @default(cuid())
+  id            String    @id @default(cuid())
   firstName     String?
   lastName      String?
-  role          Role            @default(USER)
-  status        Status          @default(INACTIVE)
-  email         String?         @unique
-  emailVerified DateTime?       @map("email_verified")
+  role          Role      @default(USER)
+  status        Status    @default(INACTIVE)
+  email         String?   @unique
+  emailVerified DateTime? @map("email_verified")
   image         String?
-  
+
   sessions      Session[]
   // Optional for WebAuthn support
   Authenticator Authenticator[]
 
-  password    String
+  password  String
   // twoFactorSecret String? // Optional for 2FA secret
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
   keys             Key[]
@@ -79,14 +79,15 @@ model Authenticator {
 }
 
 model Key {
-  id                  Int      @id @default(autoincrement())
-  userId              String
-  keyName             String
-  algorithm           String
-  keySize             Int
-  curve               String?
-  publicKey           String
-  encryptedPrivateKey String
+  id        String  @id @default(uuid())
+  userId    String
+  keyName   String
+  algorithm String
+  keySize   Int
+  curve     String?
+  publicKey String  @db.Text // Use @db.Text for longer strings
+
+  encryptedPrivateKey String   @db.Text // Use @db.Text for longer strings
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
@@ -100,7 +101,7 @@ model Key {
 model ActivityLog {
   id        Int      @id @default(autoincrement())
   userId    String
-  keyId     Int? // Optional key reference
+  keyId     String? // Optional key reference
   action    String
   timestamp DateTime @default(now())
   details   String?
