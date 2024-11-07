@@ -6,6 +6,7 @@ import { toast } from "react-hot-toast";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
+import Link from "next/link";
 
 interface IFormInputs {
   email: string;
@@ -111,6 +112,9 @@ const RegisterPage = () => {
         >
           S&apos;inscrire
         </button>
+        <p className="mt-4 text-center text-sm text-gray-600">
+          Déjà un compte? <Link href="/login" className="text-indigo-600 hover:text-indigo-500">Connectez-vous</Link>
+        </p>
       </form>
     </div>
   );

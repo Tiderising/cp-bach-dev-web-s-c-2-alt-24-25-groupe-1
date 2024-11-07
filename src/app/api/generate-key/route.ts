@@ -1,18 +1,14 @@
 import { authOptions } from "@/lib/auth";
 import { PrismaClient } from "@prisma/client";
-import { generateKeyPair } from "crypto";
+import { createCipheriv, generateKeyPair, randomBytes } from "crypto";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
-enum KeyAlgorithm {
-    RSA = "RSA",
-    ECDSA = "ECDSA",
-}
+type KeyAlgorithm = "rsa" | "ecdsa";
 
 interface GenerateKeyRequest {
   algorithm: KeyAlgorithm;
-  modulusLength?: 2048 | 3072 | 4096;
-  namedCurve?: "P-256" | "P-384" | "P-521" | "secp256k1";
+  keyLength: number;
   keyName?: string;
 }
 
@@ -26,15 +22,14 @@ const prisma = new PrismaClient();
 
 const generateKey = async (
   algorithm: KeyAlgorithm,
-  modulusLength?: number,
-  namedCurve?: string
+  keyLength: number | string
 ): Promise<GenerateKeyResponse> => {
   return new Promise((resolve, reject) => {
-    if (algorithm === KeyAlgorithm.RSA) {
+    if (algorithm === "rsa") {
       generateKeyPair(
         "rsa",
         {
-          modulusLength: modulusLength || 2048,
+          modulusLength: parseInt(keyLength as string),
           publicKeyEncoding: {
             type: "spki",
             format: "pem",
@@ -52,11 +47,11 @@ const generateKey = async (
           }
         }
       );
-    } else if (algorithm === KeyAlgorithm.ECDSA) {
+    } else if (algorithm === "ecdsa") {
       generateKeyPair(
         "ec",
         {
-          namedCurve: namedCurve || "secp256k1",
+          namedCurve: `P-${keyLength}`,
           publicKeyEncoding: {
             type: "spki",
             format: "pem",
@@ -80,69 +75,73 @@ const generateKey = async (
   });
 };
 
-export async function POST(
-  req: NextRequest,
-) {
+export const POST = async (req: NextRequest) => {
   const session = await getServerSession(authOptions);
 
-  if (!session) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const user = session.user;
-  const userId = (user as { id: string }).id;
+  const userId = (session.user as { id?: string }).id;
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
-  // Parse the request body
-  const { algorithm, modulusLength, namedCurve, keyName } = await req.json();
+  const { algorithm, keyLength, keyName } =
+    (await req.json()) as GenerateKeyRequest;
 
-  if (!algorithm || (algorithm !== KeyAlgorithm.RSA && algorithm !== KeyAlgorithm.ECDSA)) {
+  console.log("algorithm", algorithm);
+  console.log("key size", keyLength);
+  console.log("key name", keyName);
+
+  if (!algorithm || (algorithm !== "rsa" && algorithm !== "ecdsa")) {
+    return NextResponse.json({ error: "Invalid algorithm" }, { status: 400 });
+  }
+
+  if (algorithm === "rsa" && [2048, 3072, 4096].includes(keyLength)) {
     return NextResponse.json(
-        {message: "Invalid parameter: algorithm must be 'RSA' or 'ECDSA'"}, 
-        { status: 400 }
+      { error: "Invalid key length for RSA" },
+      { status: 400 }
     );
   }
 
-  if (
-    algorithm === KeyAlgorithm.RSA &&
-    modulusLength &&
-    (![1024, 2048, 4096].includes(modulusLength) || modulusLength % 1024 !== 0)
-  ) {
-    return NextResponse.json({
-      error: "Invalid RSA modulus length. Use 1024, 2048, or 4096.",
-    }, { status: 400 });
-  }
-
-  if (
-    algorithm === KeyAlgorithm.ECDSA &&
-    namedCurve &&
-    !["secp256k1", "P-256", "P-384", "P-521"].includes(namedCurve)
-  ) {
-    return NextResponse.json({
-      message:
-        "Invalid named curve for ECDSA. Use 'secp256k1', 'P-256', 'P-384', or 'P-521'.",
-    }, { status: 400 });
+  if (algorithm === "ecdsa" && [256, 384, 521].includes(keyLength)) {
+    return NextResponse.json(
+      { error: "Invalid key length for ECDSA" },
+      { status: 400 }
+    );
   }
 
   try {
-    const keys = await generateKey(algorithm, modulusLength, namedCurve);
+    const keys = await generateKey(algorithm, keyLength);
 
-    console.log(keys);
+    console.log("keys", keys);
 
-    const keySaved = await prisma.key.create({
+    const algo = "aes-256-cbc";
+    const key = randomBytes(32);
+    const iv = randomBytes(16);
+
+    const cipher = createCipheriv(algo, Buffer.from(key), iv);
+    let encrypted = cipher.update(keys.privateKey);
+    encrypted = Buffer.concat([encrypted, cipher.final()]);
+
+    keys.privateKey = iv.toString("hex") + ":" + encrypted.toString("hex");
+    await prisma.key.create({
       data: {
-        userId,
-        keyName,
-        algorithm,
-        keySize: algorithm === KeyAlgorithm.RSA ? modulusLength : namedCurve,
-        curve: namedCurve
+        userId: userId,
+        keyName: keyName || "Unnamed key",
+        algorithm: algorithm,
+        keySize: keyLength.toString(),
+        publicKey: keys.publicKey,
+        encryptedPrivateKey: encrypted.toString("hex"),
       },
     });
 
-    console.log(keySaved);
-    
-
-    return NextResponse.json({ message: "Key generated successfully" }, { status: 201 });
+    return NextResponse.json(
+      { message: "Key generated successfully" },
+      { status: 201 }
+    );
   } catch (error) {
-    return NextResponse.json({ message: "Error while generating key", details: error }, { status: 500 });
+    return NextResponse.json(error, { status: 500 });
   }
-}
+};

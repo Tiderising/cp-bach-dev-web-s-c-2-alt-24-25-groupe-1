@@ -13,50 +13,50 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import axios from "axios";
 import { useState } from "react";
 import { TbCirclePlus } from "react-icons/tb";
-import axios from "axios";
 
-enum KeyAlgorithm {
-  RSA = "RSA",
-  ECDSA = "ECDSA",
-}
+type Algorithm = "rsa" | "ecdsa";
 
 const GenerateKey = () => {
-  const [algorithm, setAlgorithm] = useState<KeyAlgorithm>(KeyAlgorithm.RSA);
-  const [keyLength, setKeyLength] = useState<string>("");
+  const [algorithm, setAlgorithm] = useState<Algorithm>("rsa");
+  const [keyLength, setKeyLength] = useState<string>("2048");
   const [keyName, setKeyName] = useState<string>("");
 
   const keyLengths = {
-    RSA: ["2048", "3072", "4096"],
-    ECDSA: ["256", "384", "521"],
+    rsa: ["2048", "3072", "4096"],
+    ecdsa: ["256", "384", "521"],
   };
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const handleSubmit = () => {
+    console.log("algorithm", algorithm);
+    console.log("key length", keyLength);
+    console.log("key name", keyName);
 
-    axios
-      .post("/api/generate-key", JSON.stringify({
-            algorithm: algorithm,
-            modulusLength: algorithm === KeyAlgorithm.RSA ? parseInt(keyLength) : undefined,
-            namedCurve: algorithm === KeyAlgorithm.ECDSA ? `P-${keyLength}` : undefined,
-            keyName,
-          }),
-      )
-      .then((response) => {
-        if (response.status === 201) {
-          alert("Key generated successfully");
-        }
-      })
-      .catch((error) => {
-        console.error("Error while generating key: ", error);
-        alert("Error while generating key");
-      });
+    if (!algorithm || (algorithm !== "rsa" && algorithm !== "ecdsa")) {
+      console.error("Invalid algorithm");
+      return;
+    }
+
+    if (
+      typeof keyLength !== "string" ||
+      !keyLengths[algorithm].includes(keyLength)
+    ) {
+      console.error("Invalid key length");
+      return;
+    }
+
+    axios.post("/api/generate-key", {
+      algorithm,
+      keyLength: keyLength,
+      keyName,
+    });
   };
 
   return (
-    <main className="flex size-full items-center justify-center bg-secondary p-4">
-      <Card className="w-full max-w-md">
+    <main className="flex size-full items-center justify-center bg-secondary">
+      <Card>
         <CardHeader>
           <div className="flex gap-2">
             <TbCirclePlus size={32} />
@@ -68,27 +68,27 @@ const GenerateKey = () => {
           </p>
         </CardHeader>
         <CardContent>
-          <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+          <form action={handleSubmit} className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
               <p>Algorithme de la clé</p>
               <RadioGroup
                 className="flex gap-4"
                 value={algorithm}
-                onValueChange={(value: KeyAlgorithm) => setAlgorithm(value)}
+                onValueChange={(value: Algorithm) => setAlgorithm(value)}
               >
                 <div className="flex items-center justify-center gap-2">
-                  <RadioGroupItem id="rsa" value={KeyAlgorithm.RSA} />
+                  <RadioGroupItem id="rsa" value="rsa" />
                   <Label htmlFor="rsa">RSA</Label>
                 </div>
                 <div className="flex items-center justify-center gap-2">
-                  <RadioGroupItem id="ecdsa" value={KeyAlgorithm.ECDSA} />
+                  <RadioGroupItem id="ecdsa" value="ecdsa" />
                   <Label htmlFor="ecdsa">ECDSA</Label>
                 </div>
               </RadioGroup>
             </div>
             <div className="flex flex-col gap-2">
               <Label>Longueur de la clé</Label>
-              <Select onValueChange={setKeyLength}>
+              <Select onValueChange={(value: string) => setKeyLength(value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Sélectionner la longueur de la clé" />
                 </SelectTrigger>

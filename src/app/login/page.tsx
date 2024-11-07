@@ -1,9 +1,9 @@
 "use client"
-// import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import { signIn } from "next-auth/react";
+import Link from "next/link";
 
 interface IFormInputs {
   email: string;
@@ -62,6 +62,9 @@ const LoginPage = () => {
         >
           Se connecter
         </button>
+        <p className="mt-4 text-center text-sm text-gray-600">
+          Pas de compte ? <Link href="/register" className="text-indigo-600 hover:underline">S'inscrire</Link>
+        </p>
       </form>
     </div>
   );
