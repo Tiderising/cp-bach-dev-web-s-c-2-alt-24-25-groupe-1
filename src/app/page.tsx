@@ -13,7 +13,7 @@ export default function Home() {
           <p className="font-semibold text-lg">Secu-tech</p>
         </div>
         <Button>
-          <Link href="/auth">Commencer</Link>
+          <Link href="/login">Commencer</Link>
         </Button>
       </header>
       <div className="flex flex-col gap-6 items-center">
