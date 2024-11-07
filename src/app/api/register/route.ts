@@ -50,7 +50,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ status: 201 , message : "Utilisateur créé avec succès" });
 
     } catch (error) {
-        console.error("Erreur lors de la création de l'utilisateur :", error);
+        console.log("Erreur lors de la création de l'utilisateur :", error);
         return NextResponse.json(
             { error: "Erreur lors de la création de l'utilisateur" },
             { status: 500 }

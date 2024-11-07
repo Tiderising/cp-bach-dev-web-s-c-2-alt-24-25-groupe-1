@@ -1,35 +1,32 @@
-import { Status } from "@prisma/client";
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
+import { Status } from "@prisma/client";
 
 export default withAuth(
   async function middleware(req) {
     const { nextUrl } = req;
     const token = req.nextauth?.token;
+    const status = req.nextauth?.token?.status;
 
-    // Gestion de l'autorisation selon la route
+    console.log(status);
+    
+
+    // Vérification du statut de l'utilisateur pour l'accès à /crm
     if (nextUrl.pathname.startsWith("/crm")) {
       if (!token || token.status !== Status.ACTIVE) {
-        // Redirige vers une page de non-autorisation pour /crm si le statut n'est pas ACTIVE
         return NextResponse.redirect(new URL("/account/2auth", req.url));
       }
-    } else if (nextUrl.pathname.startsWith("/account")) {
-      if (!token) {
-        // Redirige vers la page de connexion si l'utilisateur n'est pas authentifié pour /account
-        return NextResponse.redirect(new URL("/login", req.url));
-      }
+    } else if (nextUrl.pathname.startsWith("/account") && !token) {
+      return NextResponse.redirect(new URL("/login", req.url));
     } else if (!token) {
-      // Redirige vers la page de connexion pour toutes les autres routes protégées
       return NextResponse.redirect(new URL("/login", req.url));
     }
 
-    // Si autorisé, continuer
     return NextResponse.next();
   },
   {
     callbacks: {
-      async authorized({ token }) {
-        // Ne pas gérer la logique d'autorisation ici, on l'a déplacée dans le middleware
+      async authorized() {
         return true;
       },
     },

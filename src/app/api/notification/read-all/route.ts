@@ -33,7 +33,7 @@ export async function PATCH(req: NextRequest, res: NextResponse) {
       { status: 200 }
     );
   } catch (error) {
-    console.error("Erreur:", error);
+    console.log("Erreur:", error);
     return NextResponse.json(
       { message: "Erreur interne du serveur" },
       { status: 500 }

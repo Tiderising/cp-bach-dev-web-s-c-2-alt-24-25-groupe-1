@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { signOut } from "next-auth/react";
-import { twoFactorCode } from "@/lib/sendTwoFactor";
 
 const ActivationPage = () => {
   const { register, handleSubmit, setValue, formState: { errors } } = useForm<{ code: string }>();
@@ -36,6 +35,21 @@ const ActivationPage = () => {
     }
   };
 
+  const sendCode = async () => {
+    try {
+      await toast.promise(
+        axios.post("/api/sendTwoFactorCode"),
+        {
+          loading: "Envoi du code en cours...",
+          success: "Code envoyé avec succès !",
+          error: "Échec de l'envoi du code.",
+        }
+      );
+    } catch (error) {
+      console.log("Erreur d'envoi du code :", error);
+    }
+  }
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <form onSubmit={handleSubmit(onSubmit)} className="bg-white p-6 rounded shadow-md w-full max-w-sm">
@@ -65,7 +79,7 @@ const ActivationPage = () => {
         <button
         type="button" // Change to "button" to prevent form submission
         className="w-full text-gray-600 hover:text-gray-800 mt-4"
-        onClick={() => twoFactorCode()}
+        onClick={() => sendCode()}
         >
             Renvoyer le code
         </button>

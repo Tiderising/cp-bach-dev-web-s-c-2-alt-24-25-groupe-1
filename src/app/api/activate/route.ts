@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 
         return NextResponse.json({ message: "Compte activé avec succès" });
     } catch (error) {
-        console.error("Erreur lors de l'activation du compte :", error);
+        console.log("Erreur lors de l'activation du compte :", error);
         return NextResponse.json(
             { error: "Erreur lors de l'activation du compte" },
             { status: 500 }

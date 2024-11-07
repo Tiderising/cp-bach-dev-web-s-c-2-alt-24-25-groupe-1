@@ -39,7 +39,6 @@ model User {
   notifications       Notification[]
   notifyByEmail       Boolean          @default(false)
   twoFactorCode       String?
-  twoFactorCodeExpiry DateTime?
 
   @@map("users")
 }
