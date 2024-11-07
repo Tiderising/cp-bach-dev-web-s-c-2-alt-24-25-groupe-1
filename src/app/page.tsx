@@ -1,7 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Container } from "lucide-react";
 import Link from "next/link";
-import { FaLock } from "react-icons/fa6";
 import { IoIosLock } from "react-icons/io";
 
 export default function Home() {

@@ -1,5 +1,5 @@
 import { NextAuthOptions } from "next-auth";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Status } from "@prisma/client";
 import { compare } from "bcryptjs";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { withAccelerate } from "@prisma/extension-accelerate";
@@ -36,6 +36,8 @@ export const authOptions: NextAuthOptions = {
             throw new Error("Mot de passe incorrect");
           }
 
+          
+
           return {
             id: user.id,
             firstName: user.firstName,
@@ -43,6 +45,7 @@ export const authOptions: NextAuthOptions = {
             email: user.email,
             role: user.role,
             status: user.status,
+            notifyByEmail: user.notifyByEmail,
           };
         } catch (error) {
           throw error;
@@ -62,6 +65,9 @@ export const authOptions: NextAuthOptions = {
         token.lastName = (user as { lastName?: string }).lastName;
         token.role = (user as { role?: string }).role;
         token.status = (user as { status?: string }).status;
+        token.notifyByEmail = (
+          user as { notifyByEmail?: boolean }
+        ).notifyByEmail;
       } else {
         const dbUser = await prisma.user.findUnique({
           where: { id: token.sub },
@@ -70,6 +76,7 @@ export const authOptions: NextAuthOptions = {
         if (dbUser) {
           token.role = dbUser.role;
           token.status = dbUser.status;
+          token.notifyByEmail = dbUser.notifyByEmail;
           if (dbUser.firstName && dbUser.lastName) {
             token.firstName = dbUser.firstName;
             token.lastName = dbUser.lastName;
@@ -78,19 +85,23 @@ export const authOptions: NextAuthOptions = {
       }
 
       await prisma.$disconnect();
-      
+
       return token;
     },
-    
+
     async session({ session, token }) {
-      if (session?.user && token) {      
+      if (session?.user && token) {
         (session.user as { id?: string }).id = token.sub;
-        (session.user as { firstName?: string }).firstName = token.firstName as string;
-        (session.user as { lastName?: string }).lastName = token.lastName as string;
+        (session.user as { firstName?: string }).firstName =
+          token.firstName as string;
+        (session.user as { lastName?: string }).lastName =
+          token.lastName as string;
         (session.user as { role?: string }).role = token.role as string;
         (session.user as { status?: string }).status = token.status as string;
+        (session.user as { notifyByEmail?: boolean }).notifyByEmail =
+          token.notifyByEmail as boolean;
       }
-      
+
       return session;
     },
   },

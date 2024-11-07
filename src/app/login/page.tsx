@@ -1,9 +1,11 @@
+
 "use client"
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 interface IFormInputs {
   email: string;
@@ -21,11 +23,22 @@ const LoginPage = () => {
   });
 
   const onSubmit: SubmitHandler<IFormInputs> = async data => {
-    await signIn("credentials", {
-      email: data.email,
-      password: data.password,
-      callbackUrl: "/crm",
-    });
+    try {
+      const result = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        toast.error(`Échec de la connexion : ${result.error}`);
+      } else {
+        toast.success("Connexion réussie !");
+        window.location.href = "/crm"; // Redirect manually if needed
+      }
+    } catch (error) {
+      toast.error("Une erreur s'est produite lors de la connexion.");
+    }
   };
 
   return (
@@ -63,7 +76,7 @@ const LoginPage = () => {
           Se connecter
         </button>
         <p className="mt-4 text-center text-sm text-gray-600">
-          Pas de compte ? <Link href="/register" className="text-indigo-600 hover:underline">S'inscrire</Link>
+          Pas de compte ? <Link href="/register" className="text-indigo-600 hover:underline">S&apos;inscrire</Link>
         </p>
       </form>
     </div>

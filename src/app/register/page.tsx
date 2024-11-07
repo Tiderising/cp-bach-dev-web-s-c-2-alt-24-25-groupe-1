@@ -50,7 +50,7 @@ const RegisterPage = () => {
 
       router.push("/login");
     } catch (error) {
-      console.log("Erreur d&apos;enregistrement :", error);
+      console.log("Erreur d'enregistrement :", error);
     }
   };
 

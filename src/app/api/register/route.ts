@@ -1,18 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { hash } from "bcryptjs";
+import { mailOptions, transporter } from "@/lib/nodemailer";
 
 export async function POST(req: Request) {
     const { email, password, firstName, lastName } = await req.json();
-
-    // Password strength validation
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
-    if (!passwordRegex.test(password)) {
-        return NextResponse.json(
-            { error: "Le mot de passe doit contenir au moins 8 caractères, une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial." },
-            { status: 400 }
-        );
-    }
 
     const existingUser = await prisma.user.findUnique({
         where: { email },
@@ -28,7 +20,8 @@ export async function POST(req: Request) {
     const hashedPassword = await hash(password, 10);
 
     try {
-        const newUser = await prisma.user.create({
+        
+        await prisma.user.create({
             data: {
                 email,
                 password: hashedPassword,
@@ -36,8 +29,25 @@ export async function POST(req: Request) {
                 lastName,
             },
         });
+
+        await transporter.sendMail({
+          ...mailOptions,
+          to: email, // Recipient's email
+          subject: "Bienvenue sur Secu-tech", // Subject
+          text: `Bienvenue ${firstName} ${lastName}!\n\nNous sommes ravis de vous accueillir sur Secu-tech. Vous pouvez désormais vous connecter à votre compte et explorer nos services.\n\nPour commencer, veuillez visiter notre site : ${process.env.NEXT_URL}\n\nMerci de votre confiance.\n\nCordialement,\nL'équipe Secu-tech`, // Plain text body
+          html: `
+            <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+              <h2>Bienvenue ${firstName} ${lastName}!</h2>
+              <p>Nous sommes ravis de vous accueillir sur <strong>Secu-tech</strong>. Vous pouvez désormais vous connecter à votre compte et explorer nos services.</p>
+              <p>Pour commencer, veuillez visiter notre site :</p>
+              <a href="${process.env.NEXT_URL}" style="color: #1E90FF;">Secu-tech</a>
+              <p>Merci de votre confiance.</p>
+              <p>Cordialement,<br>L'équipe Secu-tech</p>
+            </div>
+          `, // HTML body
+        });
         
-        return NextResponse.json(newUser, { status: 201 });
+        return NextResponse.json({ status: 201 , message : "Utilisateur créé avec succès" });
 
     } catch (error) {
         console.error("Erreur lors de la création de l'utilisateur :", error);
