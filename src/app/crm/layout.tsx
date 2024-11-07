@@ -5,7 +5,7 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex flex-row h-full w-full">
+    <div className="flex size-full flex-row">
       <SideBar />
       {children}
     </div>

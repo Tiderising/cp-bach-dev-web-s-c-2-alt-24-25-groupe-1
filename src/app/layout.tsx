@@ -1,3 +1,5 @@
+import { ModeToggle } from "@/components/ModeToggle";
+import { ThemeProvider } from "@/components/theme-provider";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -31,21 +33,26 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
 
   return (
-    <html lang="fr" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <head>
-        <script
-          defer
-          src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
-        ></script>
-      </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {/* Pass the session data as a prop to the SessionProvider */}
-        <SessionProvider session={session}>
-          <Providers>
-            {children}
-          </Providers>
-        </SessionProvider>
-      </body>
-    </html>
+    <>
+      <html lang="fr" suppressHydrationWarning>
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <SessionProvider session={session}>
+              <Providers>
+                {children}
+              </Providers>
+            </SessionProvider>
+            <ModeToggle />
+          </ThemeProvider>
+        </body>
+      </html>
+    </>
   );
 }
