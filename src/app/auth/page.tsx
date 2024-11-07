@@ -1,22 +1,17 @@
-"use client";
+"use client"
+import React from "react";
+import { SignIn } from "@/components/sign-in";
+// import { useSession } from "next-auth/react";
 
-import { useState } from "react";
-import { toast } from "react-hot-toast";
+const SignInForm: React.FC = () => {
 
-interface SignInFormProps {
-  csrfToken: string;
-}
-
-const SignInForm: React.FC<SignInFormProps> = ({ csrfToken }) => {
-  const [email, setEmail] = useState("");
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    toast.success("Check your email for the magic link!");
-    // You can add more logic here, like form validation or API calls
-  };
-
-  return <div className=""></div>;
+  // const session = useSession();
+    
+  return (
+    <div className="">
+      <SignIn />
+    </div>
+  );
 };
 
 export default SignInForm;

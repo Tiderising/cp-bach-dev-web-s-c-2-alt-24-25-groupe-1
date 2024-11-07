@@ -20,6 +20,24 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Generating SSL Certificates for HTTPS
+
+To run your Next.js application over HTTPS locally, you need to generate self-signed SSL certificates. You can do this using OpenSSL with the following commands:
+
+```bash
+openssl genrsa -out key.pem 2048
+```
+
+```bash
+openssl req -new -key key.pem -out csr.pem
+```
+
+```bash
+openssl x509 -req -days 365 -in csr.pem -signkey key.pem -out cert.pem
+```
+
+These commands will generate `key.pem` and `cert.pem` files in your current directory. Use these files to configure your server for HTTPS.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
