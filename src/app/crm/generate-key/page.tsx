@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,15 +13,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { IoKeyOutline } from "react-icons/io5";
+import { useState } from "react";
+import { TbCirclePlus } from "react-icons/tb";
+
+type Algorithm = "rsa" | "ecdsa";
 
 const GenerateKey = () => {
+  const [algorithm, setAlgorithm] = useState<Algorithm>("rsa");
+
+  const keyLengths = {
+    rsa: ["2048", "3072", "4096"],
+    ecdsa: ["256", "384", "521"],
+  };
+
   return (
     <main className="flex size-full items-center justify-center">
       <Card>
         <CardHeader>
           <div className="flex gap-2">
-            <IoKeyOutline size={32} />
+            <TbCirclePlus size={32} />
             <h1 className="text-2xl">Générer une nouvelle clé</h1>
           </div>
           <p>
@@ -31,28 +43,34 @@ const GenerateKey = () => {
           <form className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
               <p>Algorithme de la clé</p>
-              <RadioGroup className="flex gap-4">
+              <RadioGroup
+                className="flex gap-4"
+                value={algorithm}
+                onValueChange={(value: Algorithm) => setAlgorithm(value)}
+              >
                 <div className="flex items-center justify-center gap-2">
-                  <RadioGroupItem value="rsa" />
-                  <Label>RSA</Label>
+                  <RadioGroupItem id="rsa" value="rsa" />
+                  <Label htmlFor="rsa">RSA</Label>
                 </div>
                 <div className="flex items-center justify-center gap-2">
-                  <RadioGroupItem value="ecdsa" />
-                  <Label>ECDSA</Label>
+                  <RadioGroupItem id="ecdsa" value="ecdsa" />
+                  <Label htmlFor="ecdsa">ECDSA</Label>
                 </div>
               </RadioGroup>
             </div>
             <div className="flex flex-col gap-2">
               <Label>Longueur de la clé</Label>
               <Select>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger>
                   <SelectValue placeholder="Sélectionner la longueur de la clé" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="2048">2048 bits</SelectItem>
-                    <SelectItem value="3072">3072 bits</SelectItem>
-                    <SelectItem value="4096">4096 bits</SelectItem>
+                    {keyLengths[algorithm].map((length) => (
+                      <SelectItem key={length} value={length}>
+                        {length} bits
+                      </SelectItem>
+                    ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>
