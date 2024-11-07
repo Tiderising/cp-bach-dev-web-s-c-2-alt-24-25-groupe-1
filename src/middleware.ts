@@ -1,15 +1,13 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
-import { prisma } from "./lib/prisma"; // Import the Prisma client
-import { Role } from "@prisma/client";
 
 export default withAuth(
-  async function middleware({ nextUrl: { pathname, searchParams } }) {
+  async function middleware({ nextUrl: { } }) {
     NextResponse.next();
   },
   {
     callbacks: {
-      async authorized({ token, req: { nextUrl } }) {
+      async authorized({ token, req: { } }) {
         if (!token) return false;
 
         // // Check if the user has access to CRM or account routes

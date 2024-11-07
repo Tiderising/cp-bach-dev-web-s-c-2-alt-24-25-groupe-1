@@ -1,10 +1,10 @@
 // app/providers.tsx
 "use client";
-import { usePathname } from "next/navigation";
+// import { usePathname } from "next/navigation";
 import { Toaster } from "react-hot-toast";
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
+  // const pathname = usePathname();
 
   return (
     <div className="min-h-screen">

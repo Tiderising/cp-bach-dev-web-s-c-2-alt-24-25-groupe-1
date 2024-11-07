@@ -41,22 +41,22 @@ const RegisterPage = () => {
           loading: "Enregistrement en cours...",
           success: "Enregistrement réussi !",
           error: (error) => {
-            const errorMessage = error.response?.data?.error || "Une erreur s'est produite";
-            return `Échec de l'enregistrement : ${errorMessage}`;
+            const errorMessage = error.response?.data?.error || "Une erreur s&apos;est produite";
+            return `Échec de l&apos;enregistrement : ${errorMessage}`;
           },
         }
       );
 
       router.push("/login");
     } catch (error) {
-      console.log("Erreur d'enregistrement :", error);
+      console.log("Erreur d&apos;enregistrement :", error);
     }
   };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <form onSubmit={handleSubmit(onSubmit)} className="bg-white p-6 rounded shadow-md w-full max-w-sm">
-        <h2 className="text-2xl font-bold mb-4">S'inscrire</h2>
+        <h2 className="text-2xl font-bold mb-4">S&apos;inscrire</h2>
         <div className="mb-4">
           <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
             Prénom
@@ -109,7 +109,7 @@ const RegisterPage = () => {
           type="submit"
           className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
         >
-          S'inscrire
+          S&apos;inscrire
         </button>
       </form>
     </div>

@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { mailOptions, transporter } from "@/app/config/nodemailer";
 import { hash } from "bcryptjs";
 
 export async function POST(req: Request) {
