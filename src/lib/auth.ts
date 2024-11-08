@@ -35,6 +35,7 @@ export const authOptions: NextAuthOptions = {
               status: true,
               password: true,
               notifyByEmail: true,
+              twoFactorEnabled: true,
             },
           });
 
@@ -64,6 +65,7 @@ export const authOptions: NextAuthOptions = {
             role: user.role,
             status: user.status,
             notifyByEmail: user.notifyByEmail,
+            twoFactorEnabled: user.twoFactorEnabled,
           };
         } catch (error) {
           throw error;
@@ -83,6 +85,8 @@ export const authOptions: NextAuthOptions = {
         token.lastName = (user as { lastName?: string }).lastName;
         token.role = (user as { role?: string }).role;
         token.status = (user as { status?: string }).status;
+        token.notifyByEmail = (user as { notifyByEmail?: boolean }).notifyByEmail;
+        token.twoFactorEnabled = (user as { twoFactorEnabled?: boolean }).twoFactorEnabled;
         token.notifyByEmail = (
           user as { notifyByEmail?: boolean }
         ).notifyByEmail;
@@ -95,6 +99,7 @@ export const authOptions: NextAuthOptions = {
           token.role = dbUser.role;
           token.status = dbUser.status;
           token.notifyByEmail = dbUser.notifyByEmail;
+          token.twoFactorEnabled = dbUser.twoFactorEnabled;
           if (dbUser.firstName && dbUser.lastName) {
             token.firstName = dbUser.firstName;
             token.lastName = dbUser.lastName;
@@ -118,6 +123,7 @@ export const authOptions: NextAuthOptions = {
         (session.user as { status?: string }).status = token.status as string;
         (session.user as { notifyByEmail?: boolean }).notifyByEmail =
           token.notifyByEmail as boolean;
+          (session.user as { twoFactorEnabled?: boolean }).twoFactorEnabled = token.twoFactorEnabled as boolean;
       }
 
       return session;

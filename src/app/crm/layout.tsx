@@ -1,6 +1,8 @@
 "use client"
 import SideBar from "@/components/SideBar";
+import { Status } from "@prisma/client";
 import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 export default function Layout({
   children,
 }: Readonly<{
@@ -8,14 +10,16 @@ export default function Layout({
 }>) {
 
   const session = useSession();
-  const role = (session.data?.user as { role?: string })?.role;
   const status = (session.data?.user as { status?: string })?.status;
+  const twoFactorEnabled = (session.data?.user as { twoFactorEnabled?: boolean })?.twoFactorEnabled;
 
-  console.log("Role:", role);
-  console.log("Status:", status);
+  // console.log("Role:", role);
+  // console.log("Status:", status);
+  // console.log("Two-factor enabled:", twoFactorEnabled);
 
-
-  // TODO : Si la double authentification est activée, vérifier si status === "ACTIVE" si oui rediriger vers /account/2auth sinon afficher le composant
+  if(twoFactorEnabled && status!== Status.ACTIVE) {
+    redirect("/account/2auth");
+  }
   
 
   return (

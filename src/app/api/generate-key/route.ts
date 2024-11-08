@@ -87,12 +87,7 @@ export const POST = async (req: NextRequest) => {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { algorithm, keyLength, keyName } =
-    (await req.json()) as GenerateKeyRequest;
-
-  console.log("algorithm", algorithm);
-  console.log("key size", keyLength);
-  console.log("key name", keyName);
+  const { algorithm, keyLength, keyName } = (await req.json()) as GenerateKeyRequest;
 
   if (!algorithm || (algorithm !== "rsa" && algorithm !== "ecdsa")) {
     return NextResponse.json({ error: "Invalid algorithm" }, { status: 400 });
@@ -114,9 +109,6 @@ export const POST = async (req: NextRequest) => {
 
   try {
     const keys = await generateKey(algorithm, keyLength);
-
-    console.log("keys", keys);
-
     const algo = "aes-256-cbc";
     const key = randomBytes(32);
     const iv = randomBytes(16);

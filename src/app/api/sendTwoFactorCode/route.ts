@@ -1,6 +1,7 @@
 import { authOptions } from "@/lib/auth";
 import { mailOptions, transporter } from "@/lib/nodemailer";
 import { prisma } from "@/lib/prisma";
+import { Status } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -40,7 +41,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
     const twoFactorCode = Math.floor(
       10000000 + Math.random() * 90000000
     ).toString(); // 8 chiffres
-    const twoFactorCodeExpireTime = new Date(Date.now() + 10 * 60 * 1000); // Expiration du code dans 10 minutes
+    // TODO: Remettre 10 minutes
+    const twoFactorCodeExpireTime = new Date(Date.now() + 1 * 60 * 1000); // Expiration du code dans 10 minutes
 
     // Vérification que les valeurs sont valides avant de mettre à jour
     if (!twoFactorCode || !twoFactorCodeExpireTime) {
@@ -51,15 +53,14 @@ export async function POST(req: NextRequest, res: NextResponse) {
     }
 
     // Mise à jour de l'utilisateur avec Prisma
-    const updateUser = await prisma.user.update({
+    await prisma.user.update({
       where: { id: userId },
       data: {
         twoFactorCode,
         twoFactorCodeExpireTime: twoFactorCodeExpireTime.toISOString(), // Expiration du code dans 10 minutes
+        status: Status.INACTIVE,
       },
     });
-
-    console.log(updateUser);
 
     // Send email verification email
     await transporter.sendMail({

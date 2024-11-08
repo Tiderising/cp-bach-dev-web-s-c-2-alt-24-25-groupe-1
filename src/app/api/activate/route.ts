@@ -7,12 +7,21 @@ export async function POST(req: Request) {
 
     try {
         const user = await prisma.user.findFirst({
-            where: { twoFactorCode: code, status: Status.INACTIVE },
+            where: { 
+                twoFactorCode: code, status: Status.INACTIVE 
+            }
         });
 
         if (!user) {
             return NextResponse.json(
                 { error: "Code invalide ou expiré" },
+                { status: 400 }
+            );
+        }
+
+        if(!user.twoFactorCodeExpireTime || new Date(user.twoFactorCodeExpireTime) < new Date()) {
+            return NextResponse.json(
+                { error: "Code invalide ou Expiré" },
                 { status: 400 }
             );
         }

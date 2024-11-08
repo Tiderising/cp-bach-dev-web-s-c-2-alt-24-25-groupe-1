@@ -36,7 +36,7 @@ const ActivationPage = () => {
         axios.post("/api/activate", data).then(() => {
           setTimeout(() => {
             router.push("/crm");
-          }, 2000); // Correct usage of setTimeout
+          }, 2000); // Utilisation correcte de setTimeout
         }),
         {
           loading: "Vérification en cours...",
@@ -91,19 +91,20 @@ const ActivationPage = () => {
           Activer
         </button>
         <button
-        type="button" // Change to "button" to prevent form submission
-        className="w-full text-gray-600 hover:text-gray-800 mt-4"
+        type="button" // Changer en "button" pour éviter la soumission du formulaire
+        className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 mt-4"
         onClick={() => sendCode()}
         >
-            Renvoyer le code
+            Envoyer le code
         </button>
         <button
-          type="button" // Change to "button" to prevent form submission
+          type="button" // Changer en "button" pour éviter la soumission du formulaire
           className="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 my-4"
           onClick={() => signOut({ callbackUrl: "/login" })}
         >
           Se déconnecter
         </button>
+        <div className="text-gray-500 text-center text-xs mt-10">Si vous avez correctement entré votre code et que vous n'êtes pas directement redirigé sur le CRM, cliquez <a className="text-blue-500 font-semibold" href="/crm">ici</a></div>
       </form>
     </div>
   );

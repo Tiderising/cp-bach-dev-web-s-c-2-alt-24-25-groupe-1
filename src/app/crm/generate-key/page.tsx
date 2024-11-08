@@ -30,10 +30,6 @@ const GenerateKey = () => {
   };
 
   const handleSubmit = () => {
-    console.log("algorithm", algorithm);
-    console.log("key length", keyLength);
-    console.log("key name", keyName);
-
     if (!algorithm || (algorithm !== "rsa" && algorithm !== "ecdsa")) {
       console.log("Invalid algorithm");
       return;
