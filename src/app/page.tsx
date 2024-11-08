@@ -4,24 +4,24 @@ import { IoIosLock } from "react-icons/io";
 
 export default function Home() {
   return (
-    <main className="p-4 flex flex-col justify-center items-center gap-6">
-      <header className="flex justify-between w-full">
+    <main className="flex flex-col items-center justify-center gap-6 p-4">
+      <header className="flex w-full justify-between">
         <div className="flex items-center gap-1">
           <IoIosLock size={30} className="text-blue-400" />
-          <p className="font-semibold text-lg">Secu-tech</p>
+          <p className="text-lg font-semibold">Secu-tech</p>
         </div>
         <Button>
           <Link href="/login">Commencer</Link>
         </Button>
       </header>
-      <div className="flex flex-col gap-6 items-center">
+      <div className="flex flex-col items-center gap-6">
         <h1 className="text-4xl font-bold">Cryptographic Key Management</h1>
         <p className="text-lg font-light">
           Génerer, boutique, et partage des clefs sécurisées
         </p>
         <Button><Link href="/login">Commencer</Link></Button>
       </div>
-      <IoIosLock size={500} className="text-blue-400/20 mt-4" />
+      <IoIosLock size={500} className="mt-4 text-blue-400/20" />
     </main>
   );
 }

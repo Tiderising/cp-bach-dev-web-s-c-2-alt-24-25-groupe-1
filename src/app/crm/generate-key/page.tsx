@@ -14,7 +14,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { TbCirclePlus } from "react-icons/tb";
 
 type Algorithm = "rsa" | "ecdsa";
@@ -23,6 +25,7 @@ const GenerateKey = () => {
   const [algorithm, setAlgorithm] = useState<Algorithm>("rsa");
   const [keyLength, setKeyLength] = useState<string>("2048");
   const [keyName, setKeyName] = useState<string>("");
+  const router = useRouter();
 
   const keyLengths = {
     rsa: ["2048", "3072", "4096"],
@@ -43,11 +46,22 @@ const GenerateKey = () => {
       return;
     }
 
-    axios.post("/api/generate-key", {
-      algorithm,
-      keyLength: keyLength,
-      keyName,
-    });
+    toast
+      .promise(
+        axios.post("/api/keys", {
+          algorithm,
+          keyLength: keyLength,
+          keyName,
+        }),
+        {
+          loading: "Génération de la clé...",
+          success: "Clé générée avec succès",
+          error: "Erreur lors de la génération de la clé",
+        }
+      )
+      .then(() => {
+        router.push("/crm/manage-keys");
+      });
   };
 
   return (

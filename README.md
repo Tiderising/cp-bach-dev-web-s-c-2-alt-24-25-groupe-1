@@ -1,24 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Prerequisites
 
+- Docker
+- Yarn
+  
 ## Getting Started
 
-First, run the development server:
+First, install the project depedencies:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+yarn
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then, run the project on the server:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+yarn run secutech
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Open [https://localhost:3000](https://localhost:3000) with your browser and you will see the website.
+
+To make the project work, you need to have a MySQL database and renaming the `.env.example` file to `.env` and edit it to add your credentials:
+
+```
+NEXTAUTH_URL=https://localhost:3000/api/auth/
+
+DATABASE_URL=mysql://root:root@localhost:3306/secu-tech
+
+EMAIL_SERVER_USER=<your smtp user>
+EMAIL_SERVER_PASSWORD=<your smtp password>
+EMAIL_SERVER_HOST=<your smtp host>
+EMAIL_SERVER_PORT=<your smtp port>
+EMAIL_FROM=<your email send>
+
+NEXTAUTH_SECRET=<your secret>
+
+ENCRYPTION_KEY=<your encryption key>
+```
+
+## Database Setup
+
+To set up a MySQL database using Docker, run the following command:
+
+```bash
+docker run --name secu-tech -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=secu-tech -p 3306:3306 -d mysql:latest
+```
+
+Then, if your database is working, you'll have to migrate and generate it using Prisma.
+On a Terminal, run:
+
+```bash
+npx prisma migrate dev
+npx prisma generate
+```
 
 ## Generating SSL Certificates for HTTPS
 
