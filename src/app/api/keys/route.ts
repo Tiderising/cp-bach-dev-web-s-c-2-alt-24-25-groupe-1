@@ -115,8 +115,6 @@ export const POST = async (req: NextRequest) => {
   try {
     const keys = await generateKey(algorithm, keyLength);
 
-    console.log("keys", keys);
-
     const algo = "aes-256-cbc";
     const key = randomBytes(32);
     const iv = randomBytes(16);
@@ -144,4 +142,25 @@ export const POST = async (req: NextRequest) => {
   } catch (error) {
     return NextResponse.json(error, { status: 500 });
   }
+};
+
+export const GET = async () => {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const keys = await prisma.key.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+    where: {
+      userId: (session.user as { id?: string }).id,
+    },
+  });
+
+  console.log("keys", keys);
+
+  return NextResponse.json(keys);
 };
