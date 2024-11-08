@@ -37,13 +37,13 @@ export async function POST(req: Request) {
           ...mailOptions,
           to: email, // Recipient's email
           subject: "Bienvenue sur Secu-tech", // Subject
-          text: `Bienvenue ${firstName} ${lastName}!\n\nNous sommes ravis de vous accueillir sur Secu-tech. Vous pouvez désormais vous connecter à votre compte et explorer nos services.\n\nPour commencer, veuillez visiter notre site : ${process.env.NEXT_URL}\n\nMerci de votre confiance.\n\nCordialement,\nL'équipe Secu-tech`, // Plain text body
+          text: `Bienvenue ${firstName} ${lastName}!\n\nNous sommes ravis de vous accueillir sur Secu-tech. Vous pouvez désormais vous connecter à votre compte et explorer nos services.\n\nPour commencer, veuillez visiter notre site : ${process.env.NEXT_PUBLIC_NEXT_URL}\n\nMerci de votre confiance.\n\nCordialement,\nL'équipe Secu-tech`, // Plain text body
           html: `
             <div style="font-family: Arial, sans-serif; line-height: 1.6;">
               <h2>Bienvenue ${firstName} ${lastName}!</h2>
               <p>Nous sommes ravis de vous accueillir sur <strong>Secu-tech</strong>. Vous pouvez désormais vous connecter à votre compte et explorer nos services.</p>
               <p>Pour commencer, veuillez visiter notre site :</p>
-              <a href="${process.env.NEXT_URL}" style="color: #1E90FF;">Secu-tech</a>
+              <a href="${process.env.NEXT_PUBLIC_NEXT_URL}" style="color: #1E90FF;">Secu-tech</a>
               <p>Merci de votre confiance.</p>
               <p>Cordialement,<br>L'équipe Secu-tech</p>
             </div>
