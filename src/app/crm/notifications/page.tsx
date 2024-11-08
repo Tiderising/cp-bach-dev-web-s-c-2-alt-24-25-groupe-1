@@ -14,37 +14,7 @@ import { useEffect, useState } from "react";
 import { IoNotifications } from "react-icons/io5";
 
 export default function NotificationPage() {
-  const [notification, setNotification] = useState<Notification[]>([
-    // Placeholder data
-    {
-      id: 1,
-      title: "Génération de clé",
-      userId: "1",
-      createdAt: new Date("2024-10-30"),
-      message: "Clé API Gateway RSA 2048 bits",
-      updatedAt: new Date("2024-10-30"),
-      isRead: false,
-    },
-    {
-      id: 2,
-      title: "Import de clé",
-      userId: "1",
-      createdAt: new Date("2024-10-30"),
-      message: "Import d'une clé publique au format PEM",
-      updatedAt: new Date("2024-10-30"),
-      isRead: false,
-    },
-    {
-      id: 3,
-      title: "Export de clé",
-      userId: "1",
-      createdAt: new Date("2024-10-30"),
-      message: "Export d'une clé publique au format PEM",
-      updatedAt: new Date("2024-10-30"),
-      isRead: false,
-    }
-    // Add more placeholder data as needed
-  ]);
+  const [notification, setNotification] = useState<Notification[]>([]);
 
   const [isLoading, setIsLoading] = useState(true);
   const [erreur, setErreur] = useState({
@@ -75,14 +45,10 @@ export default function NotificationPage() {
     markAllAsRead();
   }, []);
 
-  const toggleReadStatus = (id: number) => {
-    
-  };
-
   const markAllAsRead = () => {
     // Request to mark all notifications as read
     axios
-     .patch(`/api/notification/read-all/`) // Replace with actual userId
+     .post(`/api/notification/read-all/`) // Replace with actual userId
      .then((response) => {
         console.log(response.data);
       })
@@ -165,7 +131,6 @@ export default function NotificationPage() {
                 <TableCell>
                   <Checkbox
                     checked={notif.isRead}
-                    onCheckedChange={() => toggleReadStatus(notif.id)}
                   />
                 </TableCell>
               </TableRow>

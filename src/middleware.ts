@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 // import { Status } from "@prisma/client";
 
 export default withAuth(
-  async function middleware(req) {
+  async function middleware() {
     // const { nextUrl } = req;
     // const token = req.nextauth?.token;
     // const status = req.nextauth?.token?.status;

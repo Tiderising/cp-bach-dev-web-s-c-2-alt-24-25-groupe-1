@@ -3,10 +3,10 @@ import { mailOptions, transporter } from "@/lib/nodemailer";
 import { prisma } from "@/lib/prisma";
 import { Status } from "@prisma/client";
 import { getServerSession } from "next-auth";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST() {
 
   const session = await getServerSession(authOptions);
 

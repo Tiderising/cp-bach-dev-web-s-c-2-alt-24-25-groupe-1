@@ -37,6 +37,7 @@ const LoginPage = () => {
         window.location.href = "/crm"; // Redirect manually if needed
       }
     } catch (error) {
+      console.log(error);
       toast.error("Une erreur s'est produite lors de la connexion.");
     }
   };

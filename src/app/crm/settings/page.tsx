@@ -27,7 +27,7 @@ export default function ManageKeys() {
   const toggle2FA = async () => {
     try {
       const response = await toast.promise(
-        axios.patch('/api/toggle2FA').then((res) => 
+        axios.post('/api/toggle2FA').then((res) => 
           setIs2FAEnabled(res.data.twoFactorEnabled)
         ),
         {

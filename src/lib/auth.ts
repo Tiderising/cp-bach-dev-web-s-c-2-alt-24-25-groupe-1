@@ -3,8 +3,6 @@ import { PrismaClient, Status } from "@prisma/client";
 import { compare } from "bcryptjs";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { withAccelerate } from "@prisma/extension-accelerate";
-import axios from "axios";
-import { mailOptions, transporter } from "./nodemailer";
 
 export const authOptions: NextAuthOptions = {
   providers: [

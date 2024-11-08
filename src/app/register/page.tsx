@@ -42,8 +42,8 @@ const RegisterPage = () => {
           loading: "Enregistrement en cours...",
           success: "Enregistrement réussi !",
           error: (error) => {
-            const errorMessage = error.response?.data?.error || "Une erreur s&apos;est produite";
-            return `Échec de l&apos;enregistrement : ${errorMessage}`;
+            const errorMessage = error.response?.data?.error || "Une erreur s'est produite";
+            return `Échec de l'enregistrement : ${errorMessage}`;
           },
         }
       );

@@ -1,7 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { redirect, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { signOut, useSession } from "next-auth/react";
@@ -70,7 +70,7 @@ const ActivationPage = () => {
         <h2 className="text-2xl font-bold mb-4">Activation du compte</h2>
         <div className="mb-4">
           <label htmlFor="code" className="block text-sm font-medium text-gray-700">
-            Code d'activation
+            Code d&apos;activation
           </label>
           <input
             type="text"
@@ -104,7 +104,7 @@ const ActivationPage = () => {
         >
           Se déconnecter
         </button>
-        <div className="text-gray-500 text-center text-xs mt-10">Si vous avez correctement entré votre code et que vous n'êtes pas directement redirigé sur le CRM, cliquez <a className="text-blue-500 font-semibold" href="/crm">ici</a></div>
+        <div className="text-gray-500 text-center text-xs mt-10">Si vous avez correctement entré votre code et que vous n&apos;êtes pas directement redirigé sur le CRM, cliquez <a className="text-blue-500 font-semibold" href="/crm">ici</a></div>
       </form>
     </div>
   );
