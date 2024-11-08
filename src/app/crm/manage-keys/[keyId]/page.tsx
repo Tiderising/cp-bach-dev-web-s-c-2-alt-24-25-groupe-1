@@ -1,97 +1,77 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
-import axios from "axios";
-import PublicKeyDisplay from "@/components/PublicKeyDisplay";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import crypto from "crypto";
+import axios from "axios";
+import { use, useEffect, useState } from "react";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
-const ViewKeyPage = () => {
-  const searchParams = useSearchParams();
-  const keyId = searchParams.get("keyId");
+const ViewKeyPage = ({ params }: { params: Promise<{ keyId: number }> }) => {
+  const { keyId } = use(params);
 
-  const [keyName, setKeyName] = useState<string>("");
   const [publicKey, setPublicKey] = useState<string>("");
-  const [algorithm, setAlgorithm] = useState<string>("");
-  const [keySize, setKeySize] = useState<number>(0);
-  const [fingerprint, setFingerprint] = useState<string>("");
-  const [linkExpiration, setLinkExpiration] = useState<string>("15 minutes");
-  const [allowDownload, setAllowDownload] = useState<boolean>(true);
+  const [privateKey, setPrivateKey] = useState<string>("");
+  const [showPrivateKey, setShowPrivateKey] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!keyId) return;
+    axios.get(`/api/keys/${keyId}`).then((res) => {
+      const { publicKey } = res.data;
+      setPublicKey(publicKey);
+    });
 
-    const fetchPublicKey = async () => {
-      try {
-        const response = await axios.get("/api/get-public-key", {
-          params: { keyId },
-          headers: {
-            'Allow-Download': allowDownload.toString(),
-          },
-        });
-        console.log("Données de la clé publique :", response.data);
-        setKeyName(response.data.keyName);
-        setPublicKey(response.data.publicKey);
-        setAlgorithm(response.data.algorithm);
-        setKeySize(response.data.keySize);
+    axios.get(`/api/keys/${keyId}/private`).then((res) => {
+      const { privateKey } = res.data;
+      setPrivateKey(privateKey);
+    });
+  }, [keyId]);
 
-        // Calculate the fingerprint
-        const hash = crypto.createHash('sha256');
-        hash.update(response.data.publicKey);
-        setFingerprint(hash.digest('hex'));
-      } catch (error) {
-        console.error("Erreur lors de la récupération de la clé publique :", error);
-      }
-    };
-
-    fetchPublicKey();
-  }, [keyId, allowDownload]);
+  const togglePrivateKeyVisibility = () => {
+    setShowPrivateKey(!showPrivateKey);
+  };
 
   return (
     <main className="flex size-full flex-col items-center justify-center bg-secondary p-4">
-      <Card className="w-full max-w-lg">
+      <Card className="w-full max-w-screen-lg">
         <CardHeader>
-          <h1 className="text-3xl font-bold">Share Public Key</h1>
-          <p className="text-sm text-gray-500">Create a secure, temporary link to share your public key</p>
+          <div className="flex items-center gap-2">
+            <FaRegEye size={32} />
+            <h1 className="text-3xl font-bold">Afficher sa clé</h1>
+          </div>
+          <p className="text-sm text-gray-500">
+            Afficher sa clé publique et récupérer sa clé privée
+          </p>
         </CardHeader>
-        <CardContent>
-          <h2 className="text-2xl font-semibold mt-6">Public Key Details</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="mb-2"><strong>Nom de la clé:</strong> {keyName}</p>
-              <p className="mb-2"><strong>Taille de la clé:</strong> {keySize} bits</p>
-            </div>
-            <div>
-              <p className="mb-2"><strong>Algorithme:</strong> {algorithm}</p>
-              <p className="mb-2"><strong>Empreinte:</strong> {fingerprint}</p>
-            </div>
+        <CardContent className="flex flex-col gap-8">
+          <div className="flex flex-col gap-2">
+            <h2 className="text-lg">Clé publique</h2>
+            <Card>
+              <CardContent className="pt-6">
+                <div className="whitespace-pre-wrap break-words">
+                  {publicKey}
+                </div>
+              </CardContent>
+            </Card>
           </div>
-          <PublicKeyDisplay keyName={keyName} publicKey={publicKey} algorithm={algorithm} keySize={keySize} fingerprint={fingerprint} allowDownload={allowDownload} />
-          
-          <h2 className="text-2xl font-semibold mt-6">Share Settings</h2>
-          <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700">Link Expiration</label>
-            <select
-              value={linkExpiration}
-              onChange={(e) => setLinkExpiration(e.target.value)}
-              className="border p-2 rounded mt-1"
-            >
-              <option value="15 minutes">15 minutes</option>
-              <option value="30 minutes">30 minutes</option>
-              <option value="1 hour">1 hour</option>
-              <option value="2 hours">2 hours</option>
-              <option value="4 hours">4 hours</option>
-            </select>
-          </div>
-          <div className="mt-4 flex items-center">
-            <label className="block text-sm font-medium text-gray-700 mr-2">Allow Download</label>
-            <input
-              type="checkbox"
-              checked={allowDownload}
-              onChange={() => setAllowDownload(!allowDownload)}
-              className="h-4 w-4 text-indigo-600 border-gray-300 rounded"
-            />
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg">Clé privée</h2>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={togglePrivateKeyVisibility}
+              >
+                {showPrivateKey ? <FaRegEyeSlash /> : <FaRegEye />}
+              </Button>
+            </div>
+            <Card>
+              <CardContent className="pt-6">
+                <div className="whitespace-pre-wrap break-words">
+                  {showPrivateKey
+                    ? privateKey
+                    : "••••••••••••••••••••••••••••••••••"}
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </CardContent>
       </Card>

@@ -20,6 +20,8 @@ interface GenerateKeyResponse {
 
 const prisma = new PrismaClient();
 
+const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
+
 const generateKey = async (
   algorithm: KeyAlgorithm,
   keyLength: number | string
@@ -90,10 +92,6 @@ export const POST = async (req: NextRequest) => {
   const { algorithm, keyLength, keyName } =
     (await req.json()) as GenerateKeyRequest;
 
-  console.log("algorithm", algorithm);
-  console.log("key size", keyLength);
-  console.log("key name", keyName);
-
   if (!algorithm || (algorithm !== "rsa" && algorithm !== "ecdsa")) {
     return NextResponse.json({ error: "Invalid algorithm" }, { status: 400 });
   }
@@ -112,11 +110,18 @@ export const POST = async (req: NextRequest) => {
     );
   }
 
+  if (!ENCRYPTION_KEY) {
+    return NextResponse.json(
+      { error: "ENCRYPTION_KEY is missing in .env" },
+      { status: 500 }
+    );
+  }
+
   try {
     const keys = await generateKey(algorithm, keyLength);
 
     const algo = "aes-256-cbc";
-    const key = randomBytes(32);
+    const key = ENCRYPTION_KEY;
     const iv = randomBytes(16);
 
     const cipher = createCipheriv(algo, Buffer.from(key), iv);
