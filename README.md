@@ -11,16 +11,10 @@ First, install the project depedencies:
 yarn
 ```
 
-Then, build the project:
+Then, run the project on development server:
 
 ```bash
-yarn run build
-```
-
-Finally, run the project from the build:
-
-```bash
-yarn run start
+yarn run dev
 ```
 
 Open [https://localhost:3000](https://localhost:3000) with your browser and you will see the website.
