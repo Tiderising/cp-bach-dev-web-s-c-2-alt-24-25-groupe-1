@@ -1,10 +1,8 @@
 import { authOptions } from "@/lib/auth";
 import { PrismaClient } from "@prisma/client";
-import { mailOptions, transporter } from "@/lib/nodemailer";
+import { withAccelerate } from "@prisma/extension-accelerate";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { withAccelerate } from "@prisma/extension-accelerate";
-import { string } from "yup";
 
 const prisma = new PrismaClient().$extends(withAccelerate());
 
@@ -39,7 +37,9 @@ export async function POST(req: NextRequest, res: NextResponse) {
       );
     }
 
-    const twoFactorCode = Math.floor(10000000 + Math.random() * 90000000).toString(); // 8 chiffres
+    const twoFactorCode = Math.floor(
+      10000000 + Math.random() * 90000000
+    ).toString(); // 8 chiffres
     const twoFactorCodeExpireTime = new Date(Date.now() + 10 * 60 * 1000); // Expiration du code dans 10 minutes
 
     // Vérification que les valeurs sont valides avant de mettre à jour
@@ -53,38 +53,38 @@ export async function POST(req: NextRequest, res: NextResponse) {
     // Mise à jour de l'utilisateur avec Prisma
     const updateUser = await prisma.user.update({
       where: { id: userId },
-      data: { 
+      data: {
         twoFactorCode,
-        twoFactorCodeExpireTime: "now", // Expiration du code dans 10 minutes
+        twoFactorCodeExpireTime: twoFactorCodeExpireTime.toISOString(), // Expiration du code dans 10 minutes
       },
     });
 
-    console.log();
-    
+    console.log(updateUser);
 
     // Send email verification email
-    await transporter.sendMail({
-      ...mailOptions,
-      to: user.email as string, // Recipient's email
-      subject: "Votre Code de Validation", // Subject
-      text: `Bonjour ${user.firstName} ${user.lastName},\n\nPour confirmer votre identité, veuillez entrer le code de validation suivant : ${twoFactorCode}.\n\nVous pouvez également cliquer sur le lien suivant pour activer votre compte : ${process.env.NEXT_URL}/activation?code=${twoFactorCode}\n\nMerci de votre confiance.\n\nCordialement,\nL'équipe Secu-tech`, // Plain text body
-      html: `
-          <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-            <h2>Bonjour ${user.firstName} ${user.lastName},</h2>
-            <p>Pour confirmer votre identité, veuillez entrer le code de validation suivant :</p>
-            <h3 style="color: #4CAF50;">${twoFactorCode}</h3>
-            <p>Vous pouvez également cliquer sur le lien ci-dessous pour activer votre compte :</p>
-            <a href="${process.env.NEXT_URL}/activation?code=${twoFactorCode}" style="color: #1E90FF;">Activer mon compte</a>
-            <p>Merci de votre confiance.</p>
-            <p>Cordialement,<br>L'équipe Secu-tech</p>
-          </div>
-        `, // HTML body
-    });
+    // await transporter.sendMail({
+    //   ...mailOptions,
+    //   to: user.email as string, // Recipient's email
+    //   subject: "Votre Code de Validation", // Subject
+    //   text: `Bonjour ${user.firstName} ${user.lastName},\n\nPour confirmer votre identité, veuillez entrer le code de validation suivant : ${twoFactorCode}.\n\nVous pouvez également cliquer sur le lien suivant pour activer votre compte : ${process.env.NEXT_URL}/activation?code=${twoFactorCode}\n\nMerci de votre confiance.\n\nCordialement,\nL'équipe Secu-tech`, // Plain text body
+    //   html: `
+    //       <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+    //         <h2>Bonjour ${user.firstName} ${user.lastName},</h2>
+    //         <p>Pour confirmer votre identité, veuillez entrer le code de validation suivant :</p>
+    //         <h3 style="color: #4CAF50;">${twoFactorCode}</h3>
+    //         <p>Vous pouvez également cliquer sur le lien ci-dessous pour activer votre compte :</p>
+    //         <a href="${process.env.NEXT_URL}/activation?code=${twoFactorCode}" style="color: #1E90FF;">Activer mon compte</a>
+    //         <p>Merci de votre confiance.</p>
+    //         <p>Cordialement,<br>L'équipe Secu-tech</p>
+    //       </div>
+    //     `, // HTML body
+    // });
 
     return NextResponse.json({
-      message: "Code de validation envoyé avec succès, expirera dans 10 minutes",
+      message:
+        "Code de validation envoyé avec succès, expirera dans 10 minutes",
       status: 200,
-    })
+    });
   } catch (error) {
     console.error("Erreur Prisma:", error);
     return NextResponse.json(
