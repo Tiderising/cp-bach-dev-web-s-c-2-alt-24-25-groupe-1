@@ -36,17 +36,18 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  console.log(params.keyId);
   const keyId = params.keyId;
 
-  await prisma.key.delete({
+  const key = await prisma.key.delete({
     where: {
       id: Number(keyId),
     },
   });
 
   return NextResponse.json(
-    { message: "Key deleted successfully" },
-    { status: 200 }
+    { message: "Key deleted successfully", keyName: key.keyName,  },
+    { status: 200 },
   );
 }
 

@@ -42,7 +42,7 @@ export async function POST() {
       10000000 + Math.random() * 90000000
     ).toString(); // 8 chiffres
     // TODO: Remettre 10 minutes
-    const twoFactorCodeExpireTime = new Date(Date.now() + 1 * 60 * 1000); // Expiration du code dans 10 minutes
+    const twoFactorCodeExpireTime = new Date(Date.now() + 10 * 60 * 1000); // Expiration du code dans 10 minutes
 
     // Vérification que les valeurs sont valides avant de mettre à jour
     if (!twoFactorCode || !twoFactorCodeExpireTime) {

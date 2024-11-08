@@ -97,20 +97,28 @@ export const columns: ColumnDef<Key>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem>
-              <MdDriveFileRenameOutline />
               <Link href={`/crm/manage-keys/${row.original.id}/rename`}>
-                Renommer
+              <div className="flex items-center content-center">
+                <MdDriveFileRenameOutline />
+                <div className="ms-2">Renommer</div>
+              </div>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <FaRegTrashCan />
               <Link href={`/crm/manage-keys/${row.original.id}/delete`}>
-                Supprimer
+              <div className="flex items-center content-center">
+                <FaRegTrashCan />
+                <div className="ms-2">Supprimer</div>
+              </div>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <FaRegEye />
-              <Link href={`/crm/manage-keys/${row.original.id}`}>Afficher</Link>
+              <Link href={`/crm/manage-keys/${row.original.id}`}>
+                <div className="flex items-center content-center">
+                  <FaRegEye />
+                  <div className="ms-2">Afficher</div>
+                </div>
+              </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

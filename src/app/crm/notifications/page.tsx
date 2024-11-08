@@ -26,7 +26,7 @@ export default function NotificationPage() {
     axios
       .get("/api/notification")
       .then((response) => {
-        setNotification(response.data);
+        setNotification(response.data.data);
       })
       .then(() => {
         setIsLoading(false);
