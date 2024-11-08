@@ -1,84 +1,99 @@
+# Secutech
+
 ## Prerequisites
 
 - Docker
 - Yarn
-  
+
 ## Getting Started
 
-First, install the project depedencies:
+1. **Clone the Repository:**
 
-```bash
-yarn
-```
+   Clone the repository to your local machine.
 
-Then, run the project on the server:
+   ```bash
+   git clone <repository-url>
+   cd <repository-directory>
+   ```
 
-```bash
-yarn run secutech
-```
+2. **Install Dependencies:**
 
-Open [https://localhost:3000](https://localhost:3000) with your browser and you will see the website.
+   Install the project dependencies using Yarn.
 
-To make the project work, you need to have a MySQL database and renaming the `.env.example` file to `.env` and edit it to add your credentials:
+   ```bash
+   yarn
+   ```
 
-```
-NEXTAUTH_URL=https://localhost:3000/api/auth/
+3. **Set Up Environment Variables:**
 
-DATABASE_URL=mysql://root:root@localhost:3306/secu-tech
+   Rename the `.env.example` file to `.env` and edit it to add your credentials:
 
-EMAIL_SERVER_USER=<your smtp user>
-EMAIL_SERVER_PASSWORD=<your smtp password>
-EMAIL_SERVER_HOST=<your smtp host>
-EMAIL_SERVER_PORT=<your smtp port>
-EMAIL_FROM=<your email send>
+   ```
 
-NEXTAUTH_SECRET=<your secret>
+    NEXTAUTH_URL=https://localhost:3000/api/auth/
+    NEXT_PUBLIC_API_URL=https://localhost:3000/api
+    NEXT_PUBLIC_NEXT_URL=https://localhost:3000/crm
 
-ENCRYPTION_KEY=<your encryption key>
-```
+    DATABASE_URL=mysql://root:root@localhost:3306/secu-tech
 
-## Database Setup
+    EMAIL_SERVER_USER=<your smtp user>
+    EMAIL_SERVER_PASSWORD=<your smtp password>
+    EMAIL_SERVER_HOST=<your smtp host>
+    EMAIL_SERVER_PORT=<your smtp port>
+    EMAIL_FROM=<your email send>
 
-To set up a MySQL database using Docker, run the following command:
+    NEXTAUTH_SECRET=<your secret>
 
-```bash
-docker run --name secu-tech -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=secu-tech -p 3306:3306 -d mysql:latest
-```
+    ENCRYPTION_KEY=<your encryption key>
+   ```
 
-Then, if your database is working, you'll have to migrate and generate it using Prisma.
-On a Terminal, run:
+    add file `.env.local` :
+    ```
+    AUTH_SECRET="< auth secrect key >" # Added by `npx auth`. Read more: https://cli.authjs.dev
+    ```
 
-```bash
-npx prisma migrate dev
-npx prisma generate
-```
+4. **Database Setup:**
 
-## Generating SSL Certificates for HTTPS
+   Set up a MySQL database using Docker.
 
-To run your Next.js application over HTTPS locally, you need to generate self-signed SSL certificates. You can do this using OpenSSL with the following commands:
+   ```bash
+   docker run --name secu-tech -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=secu-tech -p 3306:3306 -d mysql:latest
+   ```
 
-```bash
-openssl genrsa -out key.pem 2048
-```
+   Migrate and generate the database using Prisma.
 
-```bash
-openssl req -new -key key.pem -out csr.pem
-```
+   ```bash
+   npx prisma migrate dev
+   npx prisma generate
+   ```
 
-```bash
-openssl x509 -req -days 365 -in csr.pem -signkey key.pem -out cert.pem
-```
+5. **Generate SSL Certificates for HTTPS:**
 
-These commands will generate `key.pem` and `cert.pem` files in your current directory. Use these files to configure your server for HTTPS.
+   To run your Next.js application over HTTPS locally, generate self-signed SSL certificates using OpenSSL.
 
-## Learn More
+   ```bash
+   openssl genrsa -out key.pem 2048
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+   ```bash
+   openssl req -new -key key.pem -out csr.pem
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ```bash
+   openssl x509 -req -days 365 -in csr.pem -signkey key.pem -out cert.pem
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   These commands will generate `key.pem` and `cert.pem` files in your current directory. Use these files to configure your server for HTTPS.
+
+6. **Run the Project:**
+
+   Start the project on the server.
+
+   ```bash
+   yarn run secutech
+   ```
+
+   Open [https://localhost:3000](https://localhost:3000) with your browser to view the website.
 
 ## Deploy on Vercel
 
