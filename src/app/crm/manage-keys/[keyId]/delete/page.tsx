@@ -14,12 +14,24 @@ const Delete = ({ params }: { params: Promise<{ keyId: number }> }) => {
 
   const handleDelete = async () => {
     toast
-      .promise(axios.delete(`/api/keys/${keyId}`), {
+      .promise(axios.delete(`/api/keys/${keyId}`).then((res) => {
+        
+        console.log("------------------------------------");        
+        console.log(res);
+        console.log("------------------------------------");
+
+        axios.post("/api/notification", {
+          title: "Clé supprimée",
+          message: `La clé "${res.data.keyName}" N°${keyId} a été supprimée avec succès`,
+        });
+
+        router.back();
+      })
+      , {
         loading: "Suppression de la clé...",
         success: "Clé supprimée avec succès",
         error: "Erreur lors de la suppression de la clé",
       })
-      .then(() => router.back());
   };
 
   const handleCancel = () => {
