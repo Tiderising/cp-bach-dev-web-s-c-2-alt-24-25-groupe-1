@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { IoKeyOutline, IoSettingsOutline } from "react-icons/io5";
+import { IoKeyOutline, IoNotifications, IoSettingsOutline } from "react-icons/io5";
 import { LuHistory, LuImport } from "react-icons/lu";
 import { TbCirclePlus } from "react-icons/tb";
 import { Button } from "./ui/button";
@@ -24,6 +24,11 @@ const Links = [
     title: "Historique",
     href: "/crm/log",
     icon: LuHistory,
+  },
+  {
+    title: "Notifications",
+    href: "/crm/notifications",
+    icon: IoNotifications,
   },
   {
     title: "Paramètres",

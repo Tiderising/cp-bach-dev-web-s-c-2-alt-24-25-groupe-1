@@ -13,29 +13,27 @@ generator client {
 }
 
 model User {
-  id            String          @id @default(cuid())
-  firstName     String?
-  lastName      String?
-  role          Role            @default(USER)
-  status        Status          @default(INACTIVE)
-  email         String?         @unique
-  emailVerified DateTime?       @map("email_verified")
-  image         String?
-  
-  sessions      Session[]
-  // Optional for WebAuthn support
-  Authenticator Authenticator[]
-
-  password    String
-  // twoFactorSecret String? // Optional for 2FA secret
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  // Relations
-  keys             Key[]
-  activityLogs     ActivityLog[]
-  sessionTokens    SessionToken?
-  securitySettings SecuritySetting?
+  id                  String           @id @default(cuid())
+  firstName           String?
+  lastName            String?
+  role                Role             @default(USER)
+  status              Status           @default(INACTIVE)
+  email               String?          @unique
+  emailVerified       DateTime?        @map("email_verified")
+  image               String?
+  sessions            Session[]
+  password            String
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+  keys                Key[]
+  activityLogs        ActivityLog[]
+  sessionTokens       SessionToken?
+  securitySettings    SecuritySetting?
+  notifications       Notification[]
+  notifyByEmail       Boolean          @default(false)
+  twoFactorCode       String?
+  twoFactorCodeExpireTime String?
+  twoFactorEnabled    Boolean?         @default(false)
 
   @@map("users")
 }
@@ -62,21 +60,21 @@ model VerificationToken {
   @@map("verification_tokens")
 }
 
-// Optional for WebAuthn support
-model Authenticator {
-  credentialID         String  @unique
-  userId               String
-  providerAccountId    String
-  credentialPublicKey  String
-  counter              Int
-  credentialDeviceType String
-  credentialBackedUp   Boolean
-  transports           String?
+// // Optional for WebAuthn support
+// model Authenticator {
+//   credentialID         String  @unique
+//   userId               String
+//   providerAccountId    String
+//   credentialPublicKey  String
+//   counter              Int
+//   credentialDeviceType String
+//   credentialBackedUp   Boolean
+//   transports           String?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+//   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@id([userId, credentialID])
-}
+//   @@id([userId, credentialID])
+// }
 
 model Key {
   id                  Int      @id @default(autoincrement())
@@ -123,6 +121,20 @@ model SessionToken {
   user User @relation(fields: [userId], references: [id])
 
   @@index([userId, expiresAt])
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // Relations
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId, isRead])
 }
 
 model SecuritySetting {

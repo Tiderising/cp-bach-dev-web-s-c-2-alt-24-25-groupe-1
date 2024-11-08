@@ -53,19 +53,21 @@ const RegisterPage = () => {
 
   const onSubmit: SubmitHandler<IFormInputs> = async (data) => {
     try {
-      await toast.promise(axios.post("/api/register", data), {
-        loading: "Enregistrement en cours...",
-        success: "Enregistrement réussi !",
-        error: (error) => {
-          const errorMessage =
-            error.response?.data?.error || "Une erreur s&apos;est produite";
-          return `Échec de l&apos;enregistrement : ${errorMessage}`;
-        },
-      });
+      await toast.promise(
+        axios.post("/api/register", data),
+        {
+          loading: "Enregistrement en cours...",
+          success: "Enregistrement réussi !",
+          error: (error) => {
+            const errorMessage = error.response?.data?.error || "Une erreur s'est produite";
+            return `Échec de l'enregistrement : ${errorMessage}`;
+          },
+        }
+      );
 
       router.push("/login");
     } catch (error) {
-      console.log("Erreur d&apos;enregistrement :", error);
+      console.log("Erreur d'enregistrement :", error);
     }
   };
 

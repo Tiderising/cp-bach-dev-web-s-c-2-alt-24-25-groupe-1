@@ -19,7 +19,7 @@ export default function Home() {
         <p className="text-lg font-light">
           Génerer, boutique, et partage des clefs sécurisées
         </p>
-        <Button>Commencer</Button>
+        <Button><Link href="/login">Commencer</Link></Button>
       </div>
       <IoIosLock size={500} className="mt-4 text-blue-400/20" />
     </main>

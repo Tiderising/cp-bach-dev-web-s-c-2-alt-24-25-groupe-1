@@ -34,7 +34,7 @@ const GenerateKey = () => {
 
   const handleSubmit = () => {
     if (!algorithm || (algorithm !== "rsa" && algorithm !== "ecdsa")) {
-      console.error("Invalid algorithm");
+      console.log("Invalid algorithm");
       return;
     }
 
@@ -42,7 +42,7 @@ const GenerateKey = () => {
       typeof keyLength !== "string" ||
       !keyLengths[algorithm].includes(keyLength)
     ) {
-      console.error("Invalid key length");
+      console.log("Invalid key length");
       return;
     }
 
