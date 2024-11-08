@@ -4,6 +4,7 @@ import { mailOptions, transporter } from "@/lib/nodemailer";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { withAccelerate } from "@prisma/extension-accelerate";
+import { string } from "yup";
 
 const prisma = new PrismaClient().$extends(withAccelerate());
 
@@ -39,10 +40,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
     }
 
     const twoFactorCode = Math.floor(10000000 + Math.random() * 90000000).toString(); // 8 chiffres
-    const twoFactorCodeExpiry = new Date(Date.now() + 10 * 60 * 1000);
+    const twoFactorCodeExpireTime = new Date(Date.now() + 10 * 60 * 1000); // Expiration du code dans 10 minutes
 
     // Vérification que les valeurs sont valides avant de mettre à jour
-    if (!twoFactorCode || !twoFactorCodeExpiry) {
+    if (!twoFactorCode || !twoFactorCodeExpireTime) {
       return NextResponse.json(
         { message: "Code ou expiration invalide" },
         { status: 400 }
@@ -54,8 +55,12 @@ export async function POST(req: NextRequest, res: NextResponse) {
       where: { id: userId },
       data: { 
         twoFactorCode,
+        twoFactorCodeExpireTime: "now", // Expiration du code dans 10 minutes
       },
     });
+
+    console.log();
+    
 
     // Send email verification email
     await transporter.sendMail({
@@ -77,8 +82,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     });
 
     return NextResponse.json({
-      message: "Code de validation envoyé avec succès",
-      twoFactorCodeExpiry: twoFactorCodeExpiry,
+      message: "Code de validation envoyé avec succès, expirera dans 10 minutes",
       status: 200,
     })
   } catch (error) {

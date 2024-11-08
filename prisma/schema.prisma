@@ -13,25 +13,18 @@ generator client {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  firstName     String?
-  lastName      String?
-  role          Role      @default(USER)
-  status        Status    @default(INACTIVE)
-  email         String?   @unique
-  emailVerified DateTime? @map("email_verified")
-  image         String?
-
-  sessions Session[]
-  // Optional for WebAuthn support
-  // Authenticator Authenticator[]
-
-  password  String
-  // twoFactorSecret String? // Optional for 2FA secret
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
+  id                  String           @id @default(cuid())
+  firstName           String?
+  lastName            String?
+  role                Role             @default(USER)
+  status              Status           @default(INACTIVE)
+  email               String?          @unique
+  emailVerified       DateTime?        @map("email_verified")
+  image               String?
+  sessions            Session[]
+  password            String
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
   keys                Key[]
   activityLogs        ActivityLog[]
   sessionTokens       SessionToken?
@@ -39,6 +32,8 @@ model User {
   notifications       Notification[]
   notifyByEmail       Boolean          @default(false)
   twoFactorCode       String?
+  twoFactorCodeExpireTime String?
+  twoFactorEnabled    Boolean?         @default(false)
 
   @@map("users")
 }
