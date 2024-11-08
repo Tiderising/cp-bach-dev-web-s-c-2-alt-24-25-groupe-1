@@ -1,6 +1,6 @@
 import { authOptions } from "@/lib/auth";
 import { PrismaClient } from "@prisma/client";
-import { createCipheriv, generateKeyPair, randomBytes } from "crypto";
+import { createCipheriv, generateKeyPair } from "crypto";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -121,8 +121,8 @@ export const POST = async (req: NextRequest) => {
     const keys = await generateKey(algorithm, keyLength);
 
     const algo = "aes-256-cbc";
-    const key = ENCRYPTION_KEY;
-    const iv = randomBytes(16);
+    const key = Buffer.from(ENCRYPTION_KEY, "hex");
+    const iv = Buffer.from(ENCRYPTION_KEY, "hex").slice(0, 16);
 
     const cipher = createCipheriv(algo, Buffer.from(key), iv);
     let encrypted = cipher.update(keys.privateKey);

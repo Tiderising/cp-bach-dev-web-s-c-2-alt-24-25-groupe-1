@@ -43,19 +43,26 @@ export async function GET(
     );
   }
 
-  const algo = "aes-256-cbc";
+  try {
+    const algo = "aes-256-cbc";
+    const encryptionKey = Buffer.from(ENCRYPTION_KEY, "hex");
+    const iv = encryptionKey.slice(0, 16);
 
-  const [ivHex, encryptedHex] = key.encryptedPrivateKey.split(":");
-  const iv = Buffer.from(ivHex, "hex");
-  const encrypted = Buffer.from(encryptedHex, "hex");
+    const encrypted = Buffer.from(key.encryptedPrivateKey, "hex");
 
-  const decipher = createDecipheriv(
-    algo,
-    Buffer.from(ENCRYPTION_KEY, "hex"),
-    iv
-  );
-  let decrypted = decipher.update(encrypted);
-  decrypted = Buffer.concat([decrypted, decipher.final()]);
+    const decipher = createDecipheriv(algo, encryptionKey, iv);
+    let decrypted = decipher.update(encrypted);
+    decrypted = Buffer.concat([decrypted, decipher.final()]);
 
-  return NextResponse.json(decrypted, { status: 200 });
+    return NextResponse.json(
+      { privateKey: decrypted.toString("utf8") },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Decryption error:", error);
+    return NextResponse.json(
+      { error: "Failed to decrypt private key" },
+      { status: 500 }
+    );
+  }
 }
