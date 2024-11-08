@@ -39,6 +39,8 @@ EMAIL_SERVER_PORT=<your smtp port>
 EMAIL_FROM=<your email send>
 
 NEXTAUTH_SECRET=<your secret>
+
+ENCRYPTION_KEY=<your encryption key>
 ```
 
 ## Database Setup
