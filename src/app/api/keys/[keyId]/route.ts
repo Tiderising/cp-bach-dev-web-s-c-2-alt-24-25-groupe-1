@@ -17,13 +17,13 @@ export async function GET(
 
   const keyId = params.keyId;
 
-  const keys = await prisma.key.findUnique({
+  const key = await prisma.key.findUnique({
     where: {
       id: Number(keyId),
     },
   });
 
-  return NextResponse.json(keys, { status: 200 });
+  return NextResponse.json(key, { status: 200 });
 }
 
 export async function DELETE(
