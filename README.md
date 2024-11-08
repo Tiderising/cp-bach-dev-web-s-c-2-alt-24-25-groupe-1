@@ -11,10 +11,10 @@ First, install the project depedencies:
 yarn
 ```
 
-Then, run the project on development server:
+Then, run the project on the server:
 
 ```bash
-yarn run dev
+yarn run secutech
 ```
 
 Open [https://localhost:3000](https://localhost:3000) with your browser and you will see the website.
