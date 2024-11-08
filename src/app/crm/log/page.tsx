@@ -1,3 +1,4 @@
+import { Card } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -121,27 +122,29 @@ export default function Log() {
         </div>
         <p>Enregistre toutes les opérations liées aux clés</p>
       </header>
-      <Table>
-        <TableHeader>
-          <TableRow className="h-14">
-            <TableHead>Type</TableHead>
-            <TableHead>Date et heure</TableHead>
-            <TableHead>Description</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {logs.map((log, index) => (
-            <TableRow key={index}>
-              <TableCell className="flex h-16 items-center justify-start gap-2 font-medium">
-                <log.icon />
-                {log.type}
-              </TableCell>
-              <TableCell className="h-16">{log.date}</TableCell>
-              <TableCell className="h-16">{log.description}</TableCell>
+      <Card className="h-screen overflow-auto">
+        <Table>
+          <TableHeader>
+            <TableRow className="h-14">
+              <TableHead>Type</TableHead>
+              <TableHead>Date et heure</TableHead>
+              <TableHead>Description</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {logs.map((log, index) => (
+              <TableRow key={index}>
+                <TableCell className="flex h-16 items-center justify-start gap-2 font-medium">
+                  <log.icon />
+                  {log.type}
+                </TableCell>
+                <TableCell className="h-16">{log.date}</TableCell>
+                <TableCell className="h-16">{log.description}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Card>
     </main>
   );
 }

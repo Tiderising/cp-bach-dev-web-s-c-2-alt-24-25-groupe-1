@@ -1,6 +1,6 @@
 import { authOptions } from "@/lib/auth";
 import { PrismaClient } from "@prisma/client";
-import { createCipheriv, generateKeyPair, randomBytes } from "crypto";
+import { createCipheriv, generateKeyPair } from "crypto";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -19,6 +19,8 @@ interface GenerateKeyResponse {
 }
 
 const prisma = new PrismaClient();
+
+const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
 
 const generateKey = async (
   algorithm: KeyAlgorithm,
@@ -90,10 +92,6 @@ export const POST = async (req: NextRequest) => {
   const { algorithm, keyLength, keyName } =
     (await req.json()) as GenerateKeyRequest;
 
-  console.log("algorithm", algorithm);
-  console.log("key size", keyLength);
-  console.log("key name", keyName);
-
   if (!algorithm || (algorithm !== "rsa" && algorithm !== "ecdsa")) {
     return NextResponse.json({ error: "Invalid algorithm" }, { status: 400 });
   }
@@ -112,14 +110,19 @@ export const POST = async (req: NextRequest) => {
     );
   }
 
+  if (!ENCRYPTION_KEY) {
+    return NextResponse.json(
+      { error: "ENCRYPTION_KEY is missing in .env" },
+      { status: 500 }
+    );
+  }
+
   try {
     const keys = await generateKey(algorithm, keyLength);
 
-    console.log("keys", keys);
-
     const algo = "aes-256-cbc";
-    const key = randomBytes(32);
-    const iv = randomBytes(16);
+    const key = Buffer.from(ENCRYPTION_KEY, "hex");
+    const iv = Buffer.from(ENCRYPTION_KEY, "hex").slice(0, 16);
 
     const cipher = createCipheriv(algo, Buffer.from(key), iv);
     let encrypted = cipher.update(keys.privateKey);
@@ -144,4 +147,25 @@ export const POST = async (req: NextRequest) => {
   } catch (error) {
     return NextResponse.json(error, { status: 500 });
   }
+};
+
+export const GET = async () => {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const keys = await prisma.key.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+    where: {
+      userId: (session.user as { id?: string }).id,
+    },
+  });
+
+  console.log("keys", keys);
+
+  return NextResponse.json(keys);
 };

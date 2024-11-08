@@ -7,14 +7,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
   // const pathname = usePathname();
 
   return (
-    <div className="min-h-screen">
+    <div className="size-full">
       <div>
         <Toaster />
       </div>
-      
-      <div className="min-h-screen">
-        {children}
-      </div>
+
+      <div className="size-full">{children}</div>
     </div>
   );
 }
