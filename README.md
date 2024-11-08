@@ -1,33 +1,99 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Secutech
+
+## Prerequisites
+
+- Docker
+- Yarn
 
 ## Getting Started
 
-First, run the development server:
+1. **Clone the Repository:**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+   Clone the repository to your local machine.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+   ```bash
+   git clone <repository-url>
+   cd <repository-directory>
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+2. **Install Dependencies:**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   Install the project dependencies using Yarn.
 
-## Learn More
+   ```bash
+   yarn
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+3. **Set Up Environment Variables:**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   Rename the `.env.example` file to `.env` and edit it to add your credentials:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```
+
+    NEXTAUTH_URL=https://localhost:3000/api/auth/
+    NEXT_PUBLIC_API_URL=https://localhost:3000/api
+    NEXT_PUBLIC_NEXT_URL=https://localhost:3000/crm
+
+    DATABASE_URL=mysql://root:root@localhost:3306/secu-tech
+
+    EMAIL_SERVER_USER=<your smtp user>
+    EMAIL_SERVER_PASSWORD=<your smtp password>
+    EMAIL_SERVER_HOST=<your smtp host>
+    EMAIL_SERVER_PORT=<your smtp port>
+    EMAIL_FROM=<your email send>
+
+    NEXTAUTH_SECRET=<your secret>
+
+    ENCRYPTION_KEY=<your encryption key>
+   ```
+
+    add file `.env.local` :
+    ```
+    AUTH_SECRET="< auth secrect key >" # Added by `npx auth`. Read more: https://cli.authjs.dev
+    ```
+
+4. **Database Setup:**
+
+   Set up a MySQL database using Docker.
+
+   ```bash
+   docker run --name secu-tech -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=secu-tech -p 3306:3306 -d mysql:latest
+   ```
+
+   Migrate and generate the database using Prisma.
+
+   ```bash
+   npx prisma migrate dev
+   npx prisma generate
+   ```
+
+5. **Generate SSL Certificates for HTTPS:**
+
+   To run your Next.js application over HTTPS locally, generate self-signed SSL certificates using OpenSSL.
+
+   ```bash
+   openssl genrsa -out key.pem 2048
+   ```
+
+   ```bash
+   openssl req -new -key key.pem -out csr.pem
+   ```
+
+   ```bash
+   openssl x509 -req -days 365 -in csr.pem -signkey key.pem -out cert.pem
+   ```
+
+   These commands will generate `key.pem` and `cert.pem` files in your current directory. Use these files to configure your server for HTTPS.
+
+6. **Run the Project:**
+
+   Start the project on the server.
+
+   ```bash
+   yarn run secutech
+   ```
+
+   Open [https://localhost:3000](https://localhost:3000) with your browser to view the website.
 
 ## Deploy on Vercel
 

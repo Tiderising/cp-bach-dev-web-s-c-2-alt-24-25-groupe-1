@@ -1,3 +1,8 @@
+// datasource db {
+//   provider = "sqlite"
+//   url      = "file:../db/dev.db"
+// }
+
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
@@ -8,75 +13,147 @@ generator client {
 }
 
 model User {
-  id                Int        @id @default(autoincrement())
-  email             String     @unique
-  passwordHash      String
-  twoFactorSecret   String?    // Optional for 2FA secret
-  createdAt         DateTime   @default(now())
-  updatedAt         DateTime   @updatedAt
+  id                  String           @id @default(cuid())
+  firstName           String?
+  lastName            String?
+  role                Role             @default(USER)
+  status              Status           @default(INACTIVE)
+  email               String?          @unique
+  emailVerified       DateTime?        @map("email_verified")
+  image               String?
+  sessions            Session[]
+  password            String
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+  keys                Key[]
+  activityLogs        ActivityLog[]
+  sessionTokens       SessionToken?
+  securitySettings    SecuritySetting?
+  notifications       Notification[]
+  notifyByEmail       Boolean          @default(false)
+  twoFactorCode       String?
+  twoFactorCodeExpireTime String?
+  twoFactorEnabled    Boolean?         @default(false)
 
-  // Relations
-  keys              Key[]
-  activityLogs      ActivityLog[]
-  sessionTokens     SessionToken?
-  securitySettings  SecuritySetting?
+  @@map("users")
 }
 
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// // Optional for WebAuthn support
+// model Authenticator {
+//   credentialID         String  @unique
+//   userId               String
+//   providerAccountId    String
+//   credentialPublicKey  String
+//   counter              Int
+//   credentialDeviceType String
+//   credentialBackedUp   Boolean
+//   transports           String?
+
+//   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+//   @@id([userId, credentialID])
+// }
+
 model Key {
-  id                 Int        @id @default(autoincrement())
-  userId             Int
-  keyName            String
-  algorithm          String
-  keySize            Int
-  curve              String?
-  publicKey          String
-  encryptedPrivateKey String
-  createdAt          DateTime   @default(now())
-  updatedAt          DateTime   @updatedAt
+  id                  Int      @id @default(autoincrement())
+  userId              String
+  keyName             String
+  algorithm           String
+  keySize             String
+  publicKey           String   @db.Text
+  encryptedPrivateKey String   @db.Text
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
   // Relations
-  user               User       @relation(fields: [userId], references: [id])
-  activityLogs       ActivityLog[]
+  user         User          @relation(fields: [userId], references: [id])
+  activityLogs ActivityLog[]
 
   @@index([userId, keyName])
 }
 
 model ActivityLog {
-  id          Int        @id @default(autoincrement())
-  userId      Int
-  keyId       Int?       // Optional key reference
-  action      String
-  timestamp   DateTime   @default(now())
-  details     String?
+  id        Int      @id @default(autoincrement())
+  userId    String
+  keyId     Int? // Optional key reference
+  action    String
+  timestamp DateTime @default(now())
+  details   String?
 
   // Relations
-  user        User       @relation(fields: [userId], references: [id])
-  key         Key?       @relation(fields: [keyId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+  key  Key? @relation(fields: [keyId], references: [id])
 
   @@index([userId, action, timestamp])
 }
 
 model SessionToken {
-  id           Int        @id @default(autoincrement())
-  userId       Int        @unique
-  token        String     @unique
-  createdAt    DateTime   @default(now())
+  id           Int      @id @default(autoincrement())
+  userId       String   @unique
+  token        String   @unique
+  createdAt    DateTime @default(now())
   expiresAt    DateTime
-  isPersistent Boolean    @default(false)
+  isPersistent Boolean  @default(false)
 
   // Relations
-  user         User       @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 
   @@index([userId, expiresAt])
 }
 
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // Relations
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId, isRead])
+}
+
 model SecuritySetting {
-  id                 Int        @id @default(autoincrement())
-  userId             Int        @unique
-  twoFactorEnabled   Boolean    @default(false)
-  sessionTimeout     Int        @default(30)
-  lastPasswordChange DateTime   @default(now())
+  id                 Int      @id @default(autoincrement())
+  userId             String   @unique
+  twoFactorEnabled   Boolean  @default(false)
+  sessionTimeout     Int      @default(30)
+  lastPasswordChange DateTime @default(now())
 
   // Relations
-  user               User       @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
 }
